@@ -413,7 +413,7 @@ namespace ExCSS
             switch (token.GrammarSegment)
             {
                 case GrammarSegment.ParenClose:
-                    SetParsingContext(ParsingContext.InSingleValue);
+                    if(_functionBuffers.Count == 1) SetParsingContext(ParsingContext.InSingleValue);
                     return AddTerm(_functionBuffers.Pop().Done());
 
                 case GrammarSegment.Comma:
@@ -481,6 +481,7 @@ namespace ExCSS
 
             ParseSingleValueHexColor(_buffer.ToString());
             SetParsingContext(ParsingContext.InSingleValue);
+            if (token.GrammarSegment == GrammarSegment.ParenClose) return ParseValueFunction(token);
             return ParseSingleValue(token);
         }
 
