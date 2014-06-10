@@ -1134,7 +1134,7 @@ namespace ExCSS
         {
             if (!current.IsHex())
             {
-                return current.ToString(CultureInfo.InvariantCulture);
+                return current.ToString();
             }
 
             var escape = new List<Char>();
