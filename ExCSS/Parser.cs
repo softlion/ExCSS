@@ -43,7 +43,7 @@ namespace ExCSS
                 {
                     continue;
                 }
-
+                _functionBuffers.Clear();
                 HandleLexerError(ParserError.UnexpectedLineBreak, ErrorMessages.Default);
             }
 
@@ -148,7 +148,7 @@ namespace ExCSS
                 {
                     _property.Term = _terms;
                 }
-                else
+                else if (_terms.Length == 1)
                 {
                     _property.Term = _terms[0];
                 }
