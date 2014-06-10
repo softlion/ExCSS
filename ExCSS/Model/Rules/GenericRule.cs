@@ -1,4 +1,6 @@
-﻿// ReSharper disable once CheckNamespace
+﻿using System.Linq;
+
+// ReSharper disable once CheckNamespace
 namespace ExCSS
 {
     public class GenericRule : AggregateRule
@@ -30,7 +32,7 @@ namespace ExCSS
                 return _text + ";";
             }
 
-            return _text + "{" + RuleSets + "}";
+            return _text + "{" + string.Join(" ", RuleSets.Select(x=>x.ToString())) + "}";
         }
     }
 }
