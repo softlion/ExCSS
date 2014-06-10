@@ -414,9 +414,11 @@ namespace ExCSS
             {
                 case GrammarSegment.ParenClose:
                     if(_functionBuffers.Count == 1) SetParsingContext(ParsingContext.InSingleValue);
+                    else if (_functionBuffers.Count == 0) return false;
                     return AddTerm(_functionBuffers.Pop().Done());
 
                 case GrammarSegment.Comma:
+                    if (_functionBuffers.Count == 0) return false;
                     _functionBuffers.Peek().Include();
                     return true;
 
@@ -685,7 +687,8 @@ namespace ExCSS
             };
 
 
-            CastRuleSet<KeyframesRule>().Declarations.Add(frame);
+            var ruleset = CastRuleSet<KeyframesRule>();
+            if (ruleset != null) ruleset.Declarations.Add(frame);
             _activeRuleSets.Push(frame);
 
             return true;
