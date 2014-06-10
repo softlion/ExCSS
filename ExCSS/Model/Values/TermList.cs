@@ -29,7 +29,7 @@ namespace ExCSS
         {
             if (_items.Count != _separator.Count + 1)
             {
-                throw new NotSupportedException("Must call AddTerm AddSeparator in that order");
+                return;
             }
 
             _separator.Add(termSepertor);
