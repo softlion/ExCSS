@@ -9,6 +9,12 @@ namespace ExCSS
     public class Stack<T>
     {
 
+        public Stack()
+        {
+            items = new List<T>();
+        }
+
+
         private List<T> items;
         public void Clear()
         {
@@ -31,8 +37,9 @@ namespace ExCSS
 
         public T Pop()
         {
-            items.RemoveAt(items.Count - 1);
-            return items[items.Count];
+            var k = items[items.Count - 1];
+            ((dynamic)items).length--;
+            return k;
         }
 
 

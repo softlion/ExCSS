@@ -66,11 +66,27 @@ namespace ExCSS.Model.TextBlocks
 
             if (SelectedRange.Length == 1)
             {
-                return "#" + Utils.ConvertToUtf32(SelectedRange[0], 0).ToString("x");
+                return "#" + Utils.ConvertToUtf32(SelectedRange[0], 0)
+#if SALTARELLE
+                .ToString(16);
+#else
+                .ToString("x");
+#endif
             }
 
-            return "#" + Utils.ConvertToUtf32(SelectedRange[0], 0).ToString("x") + "-#" +
-                Utils.ConvertToUtf32(SelectedRange[SelectedRange.Length - 1], 0).ToString("x");
+            return "#" + Utils.ConvertToUtf32(SelectedRange[0], 0)
+#if SALTARELLE
+                .ToString(16)
+#else
+                .ToString("x")
+#endif
+            + "-#" +
+            Utils.ConvertToUtf32(SelectedRange[SelectedRange.Length - 1], 0)
+#if SALTARELLE
+                .ToString(16);
+#else
+                .ToString("x");
+#endif
         }
     }
 }

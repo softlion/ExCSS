@@ -58,7 +58,11 @@ namespace ExCSS
 
                 default:
                     if (Value is Single)
+#if SALTARELLE
+                        return ((Single)Value).ToString() + ConvertUnitTypeToString(PrimitiveType);
+#else
                         return ((Single)Value).ToString(CultureInfo.InvariantCulture) + ConvertUnitTypeToString(PrimitiveType);
+#endif
 
                     return Value.ToString();
             }

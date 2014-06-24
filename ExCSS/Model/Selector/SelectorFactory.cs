@@ -224,7 +224,11 @@ namespace ExCSS
                     break;
 
                 case GrammarSegment.Number:
+#if SALTARELLE
+                    _attributeValue = ((NumericBlock)token).Value.ToString();
+#else
                     _attributeValue = ((NumericBlock)token).Value.ToString(CultureInfo.InvariantCulture);
+#endif
                     break;
 
                 default:

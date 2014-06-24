@@ -203,7 +203,13 @@ namespace ExCSS
                 //return "rgb(" + R + ", " + G + ", " + B + ")";
             }
 
-            return "rgba(" + R + ", " + G + ", " + B + ", " + Alpha.ToString("0.##") + ")";
+            return "rgba(" + R + ", " + G + ", " + B + ", " +
+#if SALTARELLE
+                Alpha.ToPrecision(3)
+#else
+                Alpha.ToString("0.##") 
+#endif
+                + ")";
         }
 
         public bool Equals(HtmlColor other)

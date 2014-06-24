@@ -20,8 +20,8 @@ namespace ExCSS.Model.Extensions
             {
                 tabs.Append("\t");
             }
-
-            return string.Format("{0}{1}", tabs, value);
+            tabs.Append(value);
+            return tabs.ToString();
         }
 
         public static string NewLineIndent(this string value, bool friendlyFormat, int indentation)
@@ -41,6 +41,8 @@ namespace ExCSS.Model.Extensions
 
         public static StringBuilder TrimLastLine(this StringBuilder builder)
         {
+            if (builder.Length == 0) return builder;
+
             while (builder[builder.Length-1] == '\r' || builder[builder.Length-1] == '\n' || builder[builder.Length-1] == '\t')
             {
                 builder.Remove(builder.Length - 1, 1);
@@ -51,6 +53,7 @@ namespace ExCSS.Model.Extensions
 
         public static StringBuilder TrimFirstLine(this StringBuilder builder)
         {
+            if (builder.Length == 0) return builder;
             while (builder[0] == '\r' || builder[0] == '\n' || builder[0] == '\t')
             {
                 builder.Remove(0, 1);
