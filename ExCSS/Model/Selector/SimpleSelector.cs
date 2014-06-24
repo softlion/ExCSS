@@ -112,7 +112,7 @@ namespace ExCSS
 
             if (value.IndexOf(Specification.SingleQuote) != -1)
             {
-                return '"' + value + '"';
+                return "\"" + value + "\"";
             }
 
             return "'" + value + "'";

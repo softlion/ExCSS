@@ -7,6 +7,9 @@ using ExCSS.Model.TextBlocks;
 // ReSharper disable once CheckNamespace
 using System;
 
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
 
 namespace ExCSS
 {

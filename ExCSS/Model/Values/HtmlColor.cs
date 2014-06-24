@@ -195,7 +195,7 @@ namespace ExCSS
         string ToCss()
         {
             if (A == 255 && ((R >> 4) == (R & 0x0F)) && ((G >> 4) == (G & 0x0F)) && ((B >> 4) == (B & 0x0F)))
-                return "#" + R.ToHexChar() + G.ToHexChar() + B.ToHexChar();
+                return "#" + R.ToHexChar().ToString() + G.ToHexChar().ToString() + B.ToHexChar().ToString();
 
             if (A == 255)
             {

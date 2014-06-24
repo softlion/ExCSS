@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using System.Text;
 using ExCSS.Model;
 using ExCSS.Model.Extensions;
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
 {
     public sealed class DocumentRule : AggregateRule
     {
-        readonly List<Tuple<DocumentFunction, string>> _conditions;
+        readonly List<DocumentFunctionStringPair> _conditions;
 
         internal DocumentRule()
         { 
             RuleType = RuleType.Document;
-            _conditions = new List<Tuple<DocumentFunction, string>>();
+            _conditions = new List<DocumentFunctionStringPair>();
         }
 
         public string ConditionText
@@ -62,7 +65,7 @@ namespace ExCSS
             }
         }
 
-        internal List<Tuple<DocumentFunction, string>> Conditions
+        internal List<DocumentFunctionStringPair> Conditions
         {
             get { return _conditions; }
         }

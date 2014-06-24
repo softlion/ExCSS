@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
+
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS

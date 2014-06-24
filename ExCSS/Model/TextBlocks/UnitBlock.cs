@@ -14,7 +14,13 @@ namespace ExCSS.Model.TextBlocks
 
         internal Single Value
         {
-            get { return Single.Parse(_value, CultureInfo.InvariantCulture); }
+            get {
+#if SALTARELLE
+                return (float)double.Parse(_value);
+#else
+                return Single.Parse(_value, CultureInfo.InvariantCulture);
+#endif
+            }
         }
 
         internal string Unit { get; private set; }

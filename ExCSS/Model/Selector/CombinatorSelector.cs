@@ -6,8 +6,8 @@ namespace ExCSS
 {
     public struct CombinatorSelector
     {
-        public BaseSelector Selector;
-        public Combinator Delimiter;
+        public readonly BaseSelector Selector;
+        public readonly Combinator Delimiter;
 
         public CombinatorSelector(BaseSelector selector, Combinator delimiter)
         {

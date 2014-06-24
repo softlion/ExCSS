@@ -2,6 +2,9 @@
 using System.IO;
 using System.Text;
 using ExCSS.Model;
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
 
 namespace ExCSS
 {
@@ -26,12 +29,13 @@ namespace ExCSS
             _reader = new StringReader(styleText);
             ReadCurrent();
         }
-
+#if !SALTARELLE
         internal StylesheetReader(Stream styleStream) : this()
         {
             _reader = new StreamReader(styleStream, true);
             ReadCurrent();
         }
+#endif
 
         internal bool IsBeginning
         {

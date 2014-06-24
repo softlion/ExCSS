@@ -2,6 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -48,10 +51,12 @@ namespace ExCSS
             return _properties.Contains(item);
         }
 
+#if !SALTARELLE
         public void CopyTo(Property[] array, int arrayIndex)
         {
             _properties.CopyTo(array, arrayIndex);
         }
+#endif
 
         public bool Remove(Property item)
         {

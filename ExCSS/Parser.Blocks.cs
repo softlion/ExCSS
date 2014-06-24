@@ -3,6 +3,10 @@ using System.Text;
 using ExCSS.Model;
 using ExCSS.Model.TextBlocks;
 
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
+
 namespace ExCSS
 {
     public partial class Parser
@@ -727,15 +731,15 @@ namespace ExCSS
             switch (token.GrammarSegment)
             {
                 case GrammarSegment.Url:
-                    CastRuleSet<DocumentRule>().Conditions.Add(Tuple.Create(DocumentFunction.Url, ((StringBlock)token).Value));
+                    CastRuleSet<DocumentRule>().Conditions.Add(new DocumentFunctionStringPair(DocumentFunction.Url, ((StringBlock)token).Value));
                     break;
 
                 case GrammarSegment.UrlPrefix:
-                    CastRuleSet<DocumentRule>().Conditions.Add(Tuple.Create(DocumentFunction.UrlPrefix, ((StringBlock)token).Value));
+                    CastRuleSet<DocumentRule>().Conditions.Add(new DocumentFunctionStringPair(DocumentFunction.UrlPrefix, ((StringBlock)token).Value));
                     break;
 
                 case GrammarSegment.Domain:
-                    CastRuleSet<DocumentRule>().Conditions.Add(Tuple.Create(DocumentFunction.Domain, ((StringBlock)token).Value));
+                    CastRuleSet<DocumentRule>().Conditions.Add(new DocumentFunctionStringPair(DocumentFunction.Domain, ((StringBlock)token).Value));
                     break;
 
                 case GrammarSegment.Function:
@@ -761,7 +765,7 @@ namespace ExCSS
             SetParsingContext(ParsingContext.AfterDocumentFunction);
 
             if (token.GrammarSegment != GrammarSegment.String) return false;
-            CastRuleSet<DocumentRule>().Conditions.Add(Tuple.Create(DocumentFunction.RegExp, ((StringBlock)token).Value));
+            CastRuleSet<DocumentRule>().Conditions.Add(new DocumentFunctionStringPair(DocumentFunction.RegExp, ((StringBlock)token).Value));
             return true;
         }
 

@@ -389,7 +389,7 @@ namespace ExCSS
 
                                 if (chr == Specification.PlusSign || chr == Specification.MinusSign)
                                 {
-                                    _attributeValue += chr;
+                                    _attributeValue += chr.ToString();
                                     return;
                                 }
 
@@ -629,23 +629,27 @@ namespace ExCSS
         private BaseSelector GetChildSelector<T>() where T : NthChildSelector, new()
         {
             var selector = new T();
-
-            if (_attributeValue.Equals(PseudoSelectorPrefix.NthChildOdd, StringComparison.OrdinalIgnoreCase))
+            int offset;
+            var parsed = int.TryParse(_attributeValue, out offset);
+            if (string.Equals(_attributeValue, PseudoSelectorPrefix.NthChildOdd, StringComparison.OrdinalIgnoreCase))
             {
                 selector.Step = 2;
                 selector.Offset = 1;
                 selector.FunctionText = PseudoSelectorPrefix.NthChildOdd;
             }
-            else if (_attributeValue.Equals(PseudoSelectorPrefix.NthChildEven, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(_attributeValue, PseudoSelectorPrefix.NthChildEven, StringComparison.OrdinalIgnoreCase))
             {
                 selector.Step = 2;
                 selector.Offset = 0;
                 selector.FunctionText = PseudoSelectorPrefix.NthChildEven;
             }
-            else if (!int.TryParse(_attributeValue, out selector.Offset))
+            else if (!parsed)
             {
+#if SALTARELLE
+                var index = _attributeValue.IndexOf(PseudoSelectorPrefix.NthChildN);
+#else
                 var index = _attributeValue.IndexOf(PseudoSelectorPrefix.NthChildN, StringComparison.OrdinalIgnoreCase);
-
+#endif
                 if (_attributeValue.Length <= 0 || index == -1)
                 {
                     return selector;
@@ -683,7 +687,6 @@ namespace ExCSS
                 }
                 else
                 {
-                    int offset;
                     if (int.TryParse(second, out offset))
                     {
                         selector.Offset = offset;

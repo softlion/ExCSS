@@ -32,7 +32,12 @@ namespace ExCSS
                 return _text + ";";
             }
 
-            return _text + "{" + string.Join(" ", RuleSets.Select(x=>x.ToString())) + "}";
+            return _text + "{" + string.Join(" ", RuleSets.Select(x=>x.ToString())
+#if SALTARELLE
+            .ToArray()
+#endif
+
+            ) + "}";
         }
     }
 }

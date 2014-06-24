@@ -114,11 +114,13 @@ namespace ExCSS.Model
 
             return string.Empty;
         }
-
+#if !SALTARELLE
         internal static bool IsSupported(string charset)
         {
             return Resolve(charset) != null;
         }
+
+
 
         internal static Encoding Resolve(string charset)
         {
@@ -384,7 +386,7 @@ namespace ExCSS.Model
                     return null;
             }
         }
-
+        
         internal static Encoding Suggest(string local)
         {
             if (local.Length < 2)
@@ -455,5 +457,6 @@ namespace ExCSS.Model
                 ? "big5"
                 : "windows-1252");
         }
+#endif
     }
 }

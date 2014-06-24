@@ -1,9 +1,12 @@
 ﻿using System.Text;
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
 {
-    public class MultipleSelectorList : SelectorList, IToString
+    public class MultipleSelectorList : SelectorList
     {
         internal static MultipleSelectorList Create(params SimpleSelector[] selectors)
         {

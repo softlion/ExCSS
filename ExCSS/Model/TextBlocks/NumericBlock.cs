@@ -15,7 +15,14 @@ namespace ExCSS.Model.TextBlocks
 
         public Single Value
         {
-            get { return Single.Parse(_data, CultureInfo.InvariantCulture); }
+            get
+            {
+#if SALTARELLE
+                return (float)double.Parse(_data);
+#else
+                return Single.Parse(_data, CultureInfo.InvariantCulture);
+#endif
+            }
         }
         
         public override string ToString()

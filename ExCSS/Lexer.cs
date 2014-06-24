@@ -4,6 +4,9 @@ using System.Globalization;
 using System.Text;
 using ExCSS.Model;
 using ExCSS.Model.TextBlocks;
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -1151,8 +1154,12 @@ namespace ExCSS
             }
 
             current = _stylesheetReader.Previous;
+#if SALTARELLE
+            var code = int.Parse(new string((char[])(dynamic)escape), 16);
+#else
             var code = int.Parse(new string(escape.ToArray()), NumberStyles.HexNumber);
-            return Char.ConvertFromUtf32(code);
+#endif
+            return Utils.ConvertFromUtf32(code);
         }
 
         private bool IsValidEscape(char current)

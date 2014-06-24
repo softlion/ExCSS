@@ -2,7 +2,7 @@
 // ReSharper disable once CheckNamespace
 namespace ExCSS
 {
-    internal abstract class NthChildSelector : BaseSelector, IToString
+    internal abstract class NthChildSelector : BaseSelector
     {
         public int Step;
         public int Offset;

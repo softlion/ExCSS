@@ -2,6 +2,9 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Collections;
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -28,7 +31,7 @@ namespace ExCSS
        
         public void ConcludeSelector(BaseSelector selector)
         {
-            _selectors.Add(new CombinatorSelector { Selector = selector });
+            _selectors.Add(new CombinatorSelector(selector, Combinator.Child));
         }
 
         public int Length
