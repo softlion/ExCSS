@@ -42,18 +42,18 @@ namespace ExCSS
             get { return _insertion < 2; }
         }
 
-        internal int Line { get; private set; }
+        internal int Line;
 
-        internal int Column { get; private set; }
+        internal int Column;
 
-        internal bool IsEnded { get; private set; }
+        internal bool IsEnded;
 
         internal bool IsEnding
         {
             get { return Current == Specification.EndOfFile; }
         }
 
-        internal char Current { get; private set; }
+        internal char Current;
 
         internal char Next
         {
