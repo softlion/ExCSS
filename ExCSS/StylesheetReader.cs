@@ -12,13 +12,19 @@ namespace ExCSS
     {
         private int _insertion;
         private readonly Stack<int> _collengths;
-        private TextReader _reader;
+#if SALTARELLE
+        private readonly string _buffer;
+#else
         private readonly StringBuilder _buffer;
+        private TextReader _reader;
+#endif
         private bool _lineWithReturn;
 
         StylesheetReader()
         {
+#if !SALTARELLE
             _buffer = new StringBuilder();
+#endif
             _collengths = new Stack<int>();
             Column = 1;
             Line = 1;
@@ -26,7 +32,11 @@ namespace ExCSS
 
         internal StylesheetReader(string styleText) : this()
         {
+#if SALTARELLE
+            _buffer = styleText;
+#else
             _reader = new StringReader(styleText);
+#endif
             ReadCurrent();
         }
 #if !SALTARELLE
@@ -124,6 +134,9 @@ namespace ExCSS
                 return;
             }
 
+#if SALTARELLE
+            Current = Specification.EndOfFile;
+#else
             var nextPosition = _reader.Read();
             Current = nextPosition == -1 ? Specification.EndOfFile : (char)nextPosition;
 
@@ -145,6 +158,7 @@ namespace ExCSS
 
             _buffer.Append(Current);
             _insertion++;
+#endif
         }
 
         private void AdvanceUnsafe()
