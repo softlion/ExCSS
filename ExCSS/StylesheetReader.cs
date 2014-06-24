@@ -108,11 +108,14 @@ namespace ExCSS
         internal void Back()
         {
             IsEnded = false;
+            if (_insertion >= 2) BackUnsafe();
+        }
 
-            if (!IsBeginning)
-            {
-                BackUnsafe();
-            }
+        internal void Back2()
+        {
+            IsEnded = false;
+            if (_insertion >= 2) BackUnsafe();
+            if (_insertion >= 2) BackUnsafe();
         }
 
         internal void Back(int positions)

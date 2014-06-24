@@ -89,7 +89,7 @@ namespace ExCSS
                         else
                         {
                             var nextSEcond = _stylesheetReader.Next;
-                            _stylesheetReader.Back(2);
+                            _stylesheetReader.Back2();
 
                             if (nextFirst.IsDigit() || (nextFirst == Specification.Period && nextSEcond.IsDigit()))
                             {
@@ -123,7 +123,7 @@ namespace ExCSS
                         else
                         {
                             var nextSecond = _stylesheetReader.Next;
-                            _stylesheetReader.Back(2);
+                            _stylesheetReader.Back2();
 
                             if (nextFirst.IsDigit() || (nextFirst == Specification.Period && nextSecond.IsDigit()))
                             {
@@ -478,7 +478,7 @@ namespace ExCSS
                     return AtKeywordRest(current);
                 }
 
-                _stylesheetReader.Back(2);
+                _stylesheetReader.Back2();
 
                 return Block.Delim(Specification.At);
             }
@@ -845,7 +845,7 @@ namespace ExCSS
 
                     if (current == Specification.EndOfFile)
                     {
-                        _stylesheetReader.Back(2);
+                        _stylesheetReader.Back2();
                         ErrorHandler(ParserError.EndOfFile, ErrorMessages.InvalidUrlEnd);
                         return StringBlock.Url(FlushBuffer(), true);
                     }
@@ -894,7 +894,7 @@ namespace ExCSS
 
                     if (current == Specification.EndOfFile)
                     {
-                        _stylesheetReader.Back(2);
+                        _stylesheetReader.Back2();
                         ErrorHandler(ParserError.EndOfFile, ErrorMessages.SingleQuotedString);
                         return StringBlock.Url(FlushBuffer(), true);
                     }
@@ -1063,7 +1063,7 @@ namespace ExCSS
                     return Block.Range(start, end);
                 }
 
-                _stylesheetReader.Back(2);
+                _stylesheetReader.Back2();
                 return Block.Range(FlushBuffer(), null);
 
             }
@@ -1129,7 +1129,7 @@ namespace ExCSS
                 return Dimension(_stylesheetReader.Next, number);
             }
        
-            _stylesheetReader.Back(2);
+            _stylesheetReader.Back2();
             return Block.Number(FlushBuffer());
         }
 
