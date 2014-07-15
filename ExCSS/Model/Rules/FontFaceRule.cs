@@ -8,10 +8,11 @@ namespace ExCSS
     {
         private readonly StyleDeclaration _declarations;
 
-        public FontFaceRule() 
+        public FontFaceRule()
         {
             _declarations = new StyleDeclaration();
             RuleType = RuleType.FontFace;
+            AtRuleKeyword = "font-face";
         }
 
         internal FontFaceRule AppendRule(Property rule)
@@ -73,6 +74,8 @@ namespace ExCSS
             set { _declarations.SetProperty("font-feature-settings", value); }
         }
 
+        public string AtRuleKeyword { get; internal set; }
+
         public override string ToString()
         {
             return ToString(false);
@@ -80,7 +83,7 @@ namespace ExCSS
 
         public override string ToString(bool friendlyFormat, int indentation = 0)
         {
-            return "@font-face{".NewLineIndent(friendlyFormat, indentation) +
+            return "@" + AtRuleKeyword + "{".NewLineIndent(friendlyFormat, indentation) +
                 _declarations.ToString(friendlyFormat, indentation) +
                 "}".NewLineIndent(friendlyFormat, indentation);
         }

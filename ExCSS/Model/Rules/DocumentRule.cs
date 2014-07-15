@@ -18,7 +18,10 @@ namespace ExCSS
         { 
             RuleType = RuleType.Document;
             _conditions = new List<DocumentFunctionStringPair>();
+            AtRuleKeyword = "document";
         }
+
+        public string AtRuleKeyword { get; internal set; }
 
         public string ConditionText
         {
@@ -77,7 +80,7 @@ namespace ExCSS
 
         public override string ToString(bool friendlyFormat, int indentation = 0)
         {
-            return "@document " + ConditionText + " {" + 
+            return "@" + AtRuleKeyword + " " + ConditionText + " {" + 
                 RuleSets + 
                 "}".NewLineIndent(friendlyFormat, indentation);
         }

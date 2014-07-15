@@ -12,7 +12,10 @@ namespace ExCSS
         {
             RuleType = RuleType.Supports;
             _condition = string.Empty;
+            AtRuleKeyword = "supports";
         }
+
+        public string AtRuleKeyword { get; internal set; }
 
         public override string Condition
         {
@@ -34,7 +37,7 @@ namespace ExCSS
             var declarationList = RuleSets.Select(d => d.ToString(friendlyFormat, indentation + 1).TrimFirstLine());
             var declarations = string.Join(join, declarationList);
 
-            return ("@supports" + _condition + "{").NewLineIndent(friendlyFormat, indentation) +
+            return ("@" + AtRuleKeyword + " " + _condition + "{").NewLineIndent(friendlyFormat, indentation) +
                 declarations.TrimFirstLine().NewLineIndent(friendlyFormat, indentation + 1) +
                 "}".NewLineIndent(friendlyFormat, indentation);
         }

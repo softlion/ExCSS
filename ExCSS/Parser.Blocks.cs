@@ -117,7 +117,14 @@ namespace ExCSS
         {
             if (token.GrammarSegment == GrammarSegment.AtRule)
             {
-                switch (((SymbolBlock)token).Value)
+                var orig = ((SymbolBlock)token).Value;
+                var val = orig;
+                if (val.Length != 0 && val[0] == '-')
+                {
+                    var s = val.IndexOf('-', 1);
+                    if (s != -1) val = val.Substring(s + 1);
+                }
+                switch (val)
                 {
                     case RuleTypes.Media:
                         {
@@ -140,7 +147,7 @@ namespace ExCSS
                         }
                     case RuleTypes.FontFace:
                         {
-                            AddRuleSet(new FontFaceRule());
+                            AddRuleSet(new FontFaceRule() { AtRuleKeyword = orig });
                             //SetParsingContext(ParsingContext.InDeclaration);
                             SetParsingContext(ParsingContext.BeforeFontFace);
                             break;
@@ -160,19 +167,19 @@ namespace ExCSS
                     case RuleTypes.Supports:
                         {
                             _buffer = new StringBuilder();
-                            AddRuleSet(new SupportsRule());
+                            AddRuleSet(new SupportsRule() { AtRuleKeyword = orig });
                             SetParsingContext(ParsingContext.InCondition);
                             break;
                         }
                     case RuleTypes.Keyframes:
                         {
-                            AddRuleSet(new KeyframesRule());
+                            AddRuleSet(new KeyframesRule() { AtRuleKeyword = orig });
                             SetParsingContext(ParsingContext.BeforeKeyframesName);
                             break;
                         }
                     case RuleTypes.Document:
                         {
-                            AddRuleSet(new DocumentRule());
+                            AddRuleSet(new DocumentRule() { AtRuleKeyword = orig });
                             SetParsingContext(ParsingContext.BeforeDocumentFunction);
                             break;
                         }
@@ -417,7 +424,7 @@ namespace ExCSS
             switch (token.GrammarSegment)
             {
                 case GrammarSegment.ParenClose:
-                    if(_functionBuffers.Count == 1) SetParsingContext(ParsingContext.InSingleValue);
+                    if (_functionBuffers.Count == 1) SetParsingContext(ParsingContext.InSingleValue);
                     else if (_functionBuffers.Count == 0) return false;
                     return AddTerm(_functionBuffers.Pop().Done());
 
@@ -559,7 +566,7 @@ namespace ExCSS
         {
             HtmlColor htmlColor;
 
-            if(HtmlColor.TryFromHex(color, out htmlColor))
+            if (HtmlColor.TryFromHex(color, out htmlColor))
                 return AddTerm(htmlColor);
             return false;
         }
@@ -666,7 +673,7 @@ namespace ExCSS
             }
 
             _buffer = new StringBuilder();
-         
+
             return ParseKeyframeText(token);
         }
 
@@ -682,6 +689,14 @@ namespace ExCSS
             {
                 ParseKeyframesData(token);
 
+                return false;
+            }
+
+            if (token.GrammarSegment == GrammarSegment.Comma)
+            {
+                if (_activeRuleSets.Count != 0 && _activeRuleSets.Peek() is KeyframeRule)
+                    FinalizeRule();
+                SetParsingContext(ParsingContext.KeyframesData);
                 return false;
             }
 
@@ -722,7 +737,7 @@ namespace ExCSS
 
             return false;
         }
-        
+
         #endregion
 
         #region Document
