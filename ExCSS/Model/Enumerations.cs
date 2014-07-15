@@ -13,6 +13,7 @@ namespace ExCSS
         internal const string Namespace = "namespace";
         internal const string Supports = "supports";
         internal const string Document = "document";
+        internal const string Viewport = "viewport";
     }
 
     internal static class PseudoSelectorPrefix
@@ -144,7 +145,7 @@ namespace ExCSS
         Document = 13,
         FontFeatureValues = 14,
         Viewport = 15,
-        RegionStyle = 16
+        RegionStyle = 16,
     }
 
     public enum UnitType
@@ -252,6 +253,7 @@ namespace ExCSS
         ValueImportant,
         AfterValue,
         InHexValue,
-        InFunction
+        InFunction,
+        BeforeViewportDeclaration
     }
 }

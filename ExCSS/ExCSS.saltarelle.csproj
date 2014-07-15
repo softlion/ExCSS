@@ -71,6 +71,7 @@
     <Compile Include="Model\Rules\MediaRule.cs" />
     <Compile Include="Model\Rules\NamespaceRule.cs" />
     <Compile Include="Model\Rules\PageRule.cs" />
+    <Compile Include="Model\Rules\ViewportRule.cs" />
     <Compile Include="Model\Rules\RuleSet.cs" />
     <Compile Include="Model\Rules\StyleDeclaration.cs" />
     <Compile Include="Model\Rules\StyleRule.cs" />

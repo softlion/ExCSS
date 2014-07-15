@@ -108,9 +108,22 @@ namespace ExCSS
                 case ParsingContext.InFunction:
 
                     return ParseValueFunction(token);
+
+                case ParsingContext.BeforeViewportDeclaration:
+                    return ParseViewport(token);
                 default:
                     return false;
             }
+        }
+
+        private bool ParseViewport(Block token)
+        {
+            if (token.GrammarSegment == GrammarSegment.CurlyBraceOpen)
+            {
+                SetParsingContext(ParsingContext.InDeclaration);
+                return true;
+            }
+            return false;
         }
 
         private bool ParseSymbol(Block token)
@@ -181,6 +194,12 @@ namespace ExCSS
                         {
                             AddRuleSet(new DocumentRule() { AtRuleKeyword = orig });
                             SetParsingContext(ParsingContext.BeforeDocumentFunction);
+                            break;
+                        }
+                    case RuleTypes.Viewport:
+                        {
+                            AddRuleSet(new ViewportRule() { AtRuleKeyword = orig });
+                            SetParsingContext(ParsingContext.BeforeViewportDeclaration);
                             break;
                         }
                     default:
