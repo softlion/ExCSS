@@ -322,6 +322,8 @@ namespace ExCSS
 
         private void ParsePseudoElement(Block token)
         {
+            _selectorOperation = SelectorOperation.Data;
+
             if (token.GrammarSegment != GrammarSegment.Ident)
             {
                 return;
