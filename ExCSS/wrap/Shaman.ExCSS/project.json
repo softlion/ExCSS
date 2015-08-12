@@ -1,0 +1,12 @@
+﻿{
+  "version": "1.0.0-beta-2862",
+  "frameworks": {
+    "net45+win+wpa81": {
+      "wrappedProject": "../../ExCSS.portable.csproj",
+      "bin": {
+        "assembly": "../../obj/{configuration}/ExCSS.dll",
+        "pdb": "../../obj/{configuration}/ExCSS.pdb"
+      }
+    }
+  }
+}
