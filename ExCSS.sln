@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExCSS.Tests", "ExCSS.Tests\ExCSS.Tests.csproj", "{5FBCD1EE-C5B6-4734-9FE0-3BA2CD14E85A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExCSS", "ExCSS\ExCSS.csproj", "{26881075-3F64-4825-A6B5-EAA0D5419D20}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{91D3702F-C71E-4722-A1C2-73BB25DC3A3B}"
+	ProjectSection(SolutionItems) = preProject
+		NuSpec\ExCSS.nuspec = NuSpec\ExCSS.nuspec
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
