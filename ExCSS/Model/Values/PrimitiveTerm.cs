@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shaman.Runtime;
+using System;
 using System.Globalization;
 using System.Text;
 
@@ -62,14 +63,25 @@ namespace ExCSS
                     sb.Append(Value);
                     sb.Append(')');
                     return;
-
+                    
                 default:
                     if (Value is Single)
                     {
+                        var s = (Single)Value;
 #if SALTARELLE
-                        sb.Append(((Single)Value).ToString());
+                        sb.Append(s.ToString());
 #else
-                        sb.Append(((Single)Value).ToString(CultureInfo.InvariantCulture));
+                        if (s < 100000 && s > -100000)
+                        {
+                            var k = (int)s;
+                            if (k == s)
+                            {
+                                sb.AppendFast(k);
+                                sb.Append(ConvertUnitTypeToString(PrimitiveType));
+                                return;
+                            }
+                        }
+                        sb.Append(s.ToString(CultureInfo.InvariantCulture));
 
 #endif
                         sb.Append(ConvertUnitTypeToString(PrimitiveType));

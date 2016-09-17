@@ -2,6 +2,7 @@
 using System.Text;
 using ExCSS.Model;
 using ExCSS.Model.TextBlocks;
+using Shaman.Runtime;
 
 #if SALTARELLE
 using StringBuilder = System.Text.Saltarelle.StringBuilder;
@@ -511,7 +512,7 @@ namespace ExCSS
                     break;
             }
 
-            ParseSingleValueHexColor(_buffer.ToString());
+            ParseSingleValueHexColor(_buffer.ToStringCached());
             SetParsingContext(ParsingContext.InSingleValue);
             if (token.GrammarSegment == GrammarSegment.ParenClose) return ParseValueFunction(token);
             return ParseSingleValue(token);

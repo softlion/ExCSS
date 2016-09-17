@@ -1,5 +1,6 @@
 ﻿
 // ReSharper disable once CheckNamespace
+using Shaman.Runtime;
 using System.Text;
 
 namespace ExCSS
@@ -12,13 +13,26 @@ namespace ExCSS
 
         internal void FormatSelector(StringBuilder sb, string functionName)
         {
-            var format = Offset < 0
-                ? ":{0}({1}n{2})"
-                : ":{0}({1}n+{2})";
+            sb.Append(':');
+            sb.Append(functionName);
+            sb.Append('(');
 
-            sb.Append(string.IsNullOrEmpty(FunctionText)
-                ? string.Format(format, functionName, Step, Offset)
-                : string.Format(":{0}({1})", functionName, FunctionText));
+            if (string.IsNullOrEmpty(FunctionText))
+            {
+                sb.AppendFast(Step);
+                sb.Append('n');
+
+                if (Offset >= 0) sb.Append('+');
+                
+                sb.AppendFast(Offset);
+            }
+            else
+            {
+                sb.Append(FunctionText);
+            }
+            sb.Append(')');
+
+
         }
 
         public abstract override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0);

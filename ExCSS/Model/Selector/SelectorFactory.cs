@@ -490,25 +490,25 @@ namespace ExCSS
                 case PseudoSelectorPrefix.PseudoFunctionNot:
                     {
                         var selector = _nestedSelectorFactory.GetSelector();
-                        var code = string.Format("{0}({1})", PseudoSelectorPrefix.PseudoFunctionNot, selector);
+                        var code = PseudoSelectorPrefix.PseudoFunctionNot + "("+ selector + ")";
                         Insert(SimpleSelector.PseudoClass(code));
                         break;
                     }
                 case PseudoSelectorPrefix.PseudoFunctionDir:
                     {
-                        var code = string.Format("{0}({1})", PseudoSelectorPrefix.PseudoFunctionDir, _attributeValue);
+                        var code = PseudoSelectorPrefix.PseudoFunctionDir + "(" + _attributeValue + ")";
                         Insert(SimpleSelector.PseudoClass(code));
                         break;
                     }
                 case PseudoSelectorPrefix.PseudoFunctionLang:
                     {
-                        var code = string.Format("{0}({1})", PseudoSelectorPrefix.PseudoFunctionLang, _attributeValue);
+                        var code = PseudoSelectorPrefix.PseudoFunctionLang + "(" + _attributeValue + ")";
                         Insert(SimpleSelector.PseudoClass(code));
                         break;
                     }
                 case PseudoSelectorPrefix.PseudoFunctionContains:
                     {
-                        var code = string.Format("{0}({1})", PseudoSelectorPrefix.PseudoFunctionContains, _attributeValue);
+                        var code = PseudoSelectorPrefix.PseudoFunctionContains + "(" + _attributeValue + ")";
                         Insert(SimpleSelector.PseudoClass(code));
                         break;
                     }
