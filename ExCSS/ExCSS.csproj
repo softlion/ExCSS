@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ExCSS</RootNamespace>
     <AssemblyName>ExCSS</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -64,12 +64,17 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Shaman.ValueString, Version=1.0.0.0, Culture=neutral, PublicKeyToken=18bc04d2eb1e1518, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shaman.ValueString.1.0.2.19\lib\net46\Shaman.ValueString.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DocumentFunctionStringPair.cs" />
     <Compile Include="IToString.cs" />
     <Compile Include="Model\Enumerations.cs" />
     <Compile Include="Model\FunctionBuffer.cs" />
@@ -77,6 +82,7 @@
     <Compile Include="Model\ICssRules.cs" />
     <Compile Include="Model\ICssSelector.cs" />
     <Compile Include="Model\IStyleDeclaration.cs" />
+    <Compile Include="Model\Rules\ViewportRule.cs" />
     <Compile Include="Model\Selector\NthOfTypeSelector.cs" />
     <Compile Include="Model\Selector\NthLastOfTypeSelector.cs" />
     <Compile Include="StylesheetParseError.cs" />
@@ -141,6 +147,7 @@
     <Compile Include="Model\Selector\BaseSelector.cs" />
     <Compile Include="Model\Values\HtmlColor.cs" />
     <Compile Include="Model\Values\InheritTerm.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -161,6 +168,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ExCSS.snk" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
