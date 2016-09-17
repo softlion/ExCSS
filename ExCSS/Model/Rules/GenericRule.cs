@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -20,24 +21,20 @@ namespace ExCSS
             _stopped = false;
         }
 
-        public override string ToString()
-        {
-            return ToString(false);
-        }
-
-        public override string ToString(bool friendlyFormat, int indentation = 0)
+        
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
             if (_stopped)
             {
-                return _text + ";";
+                sb.Append(_text);
+                sb.Append(';');
+                return;
             }
 
-            return _text + "{" + string.Join(" ", RuleSets.Select(x=>x.ToString())
-#if SALTARELLE
-            .ToArray()
-#endif
-
-            ) + "}";
+            sb.Append(_text);
+            sb.Append('{');
+            RuleSetsToString(sb, false, 0);
+            sb.Append('}');
         }
     }
 }

@@ -1,4 +1,6 @@
 using ExCSS.Model.Extensions;
+using Shaman.Runtime;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -29,19 +31,23 @@ namespace ExCSS
 
         public override string ToString()
         {
-            return ToString(false);
+            var sb = ReseekableStringBuilder.AcquirePooledStringBuilder();
+            ToString(sb, false);
+            return ReseekableStringBuilder.GetValueAndRelease(sb);
         }
 
-        public string ToString(bool friendlyFormat, int indentation = 0)
-        { 
-            var value = Name + ":" + _term;
-
+        public void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        {
+            sb.Indent(friendlyFormat, indentation);
+            sb.Append(Name);
+            sb.Append(':');
+            _term?.ToString(sb);
             if (_important)
             {
-                value += " !important";
+                sb.Append(" !important");
             }
 
-            return value.Indent(friendlyFormat, indentation);
+
         }
     }
 }

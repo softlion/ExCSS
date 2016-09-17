@@ -1,5 +1,6 @@
 ﻿using ExCSS.Model;
 using ExCSS.Model.Extensions;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -22,18 +23,15 @@ namespace ExCSS
 
         public StyleDeclaration Declarations { get; private set; }
 
-        public override string ToString()
-        {
-            return ToString(false);
-        }
+        
 
-        public override string ToString(bool friendlyFormat, int indentation = 0)
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            return string.Empty.Indent(friendlyFormat, indentation) +
-                _value + 
-                "{" + 
-                Declarations.ToString(friendlyFormat, indentation) +
-                "}".NewLineIndent(friendlyFormat, indentation);
+            sb.Indent(string.Empty, friendlyFormat, indentation);
+            sb.Append(_value);
+            sb.Append('{');
+            Declarations.ToString(sb, friendlyFormat, indentation);
+            sb.NewLineIndent("}", friendlyFormat, indentation);
         }
     }
 }

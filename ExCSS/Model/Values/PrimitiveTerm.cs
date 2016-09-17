@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -46,25 +47,36 @@ namespace ExCSS
             return quantity;
         }
 
-        public override string ToString()
+        public override void ToString(StringBuilder sb)
         {
             switch (PrimitiveType)
             {
                 case UnitType.String:
-                    return "'" + Value + "'";
+                    sb.Append('\'');
+                    sb.Append(Value);
+                    sb.Append('\'');
+                    return;
 
                 case UnitType.Uri:
-                    return "url(" + Value + ")";
+                    sb.Append("url(");
+                    sb.Append(Value);
+                    sb.Append(')');
+                    return;
 
                 default:
                     if (Value is Single)
+                    {
 #if SALTARELLE
-                        return ((Single)Value).ToString() + ConvertUnitTypeToString(PrimitiveType);
+                        sb.Append(((Single)Value).ToString());
 #else
-                        return ((Single)Value).ToString(CultureInfo.InvariantCulture) + ConvertUnitTypeToString(PrimitiveType);
-#endif
+                        sb.Append(((Single)Value).ToString(CultureInfo.InvariantCulture));
 
-                    return Value.ToString();
+#endif
+                        sb.Append(ConvertUnitTypeToString(PrimitiveType));
+                        return;
+                    }
+                    sb.Append(Value);
+                    return;
             }
         }
 

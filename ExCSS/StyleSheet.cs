@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ExCSS.Model.Extensions;
+using Shaman.Runtime;
 
 #if SALTARELLE
 using StringBuilder = System.Text.Saltarelle.StringBuilder;
@@ -132,19 +133,18 @@ namespace ExCSS
 
         public override string ToString()
         {
-            return ToString(false);
+            var sb = ReseekableStringBuilder.AcquirePooledStringBuilder();
+            ToString(sb, false);
+            return ReseekableStringBuilder.GetValueAndRelease(sb);
         }
 
-        public string ToString(bool friendlyFormat, int indentation = 0)
+        public void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            var builder = new StringBuilder();
 
             foreach (var rule in _rules)
             {
-                builder.Append(rule.ToString(friendlyFormat, indentation));
+                rule.ToString(sb, friendlyFormat, indentation);
             }
-
-            return builder.TrimFirstLine().TrimLastLine().ToString();
         }
     }
 }

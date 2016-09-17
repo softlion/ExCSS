@@ -1,5 +1,7 @@
 ﻿using ExCSS.Model;
 using ExCSS.Model.Extensions;
+using Shaman.Runtime;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -76,16 +78,16 @@ namespace ExCSS
 
         public string AtRuleKeyword { get; internal set; }
 
-        public override string ToString()
+        public override void ToString(StringBuilder sb,  bool friendlyFormat, int indentation = 0)
         {
-            return ToString(false);
-        }
+            sb.Append('@');
+            sb.Append(AtRuleKeyword);
+            sb.NewLineIndent("{", friendlyFormat, indentation);
+            _declarations.ToString(sb, friendlyFormat, indentation);
+            sb.NewLineIndent("}", friendlyFormat, indentation);
 
-        public override string ToString(bool friendlyFormat, int indentation = 0)
-        {
-            return "@" + AtRuleKeyword + "{".NewLineIndent(friendlyFormat, indentation) +
-                _declarations.ToString(friendlyFormat, indentation) +
-                "}".NewLineIndent(friendlyFormat, indentation);
+            
+                
         }
     }
 }

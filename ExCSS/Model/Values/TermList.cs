@@ -56,13 +56,13 @@ namespace ExCSS
             return this[index];
         }
 
-        public override string ToString()
+        public override void ToString(StringBuilder builder)
         {
-            var builder = new StringBuilder();
+            
 
             for (var i = 0; i < _items.Count; i++)
             {
-                builder.Append(_items[i]);
+                _items[i].ToString(builder);
 
                 if (i == _separator.Count)
                     break;
@@ -70,11 +70,11 @@ namespace ExCSS
                 switch (_separator[i])
                 {
                     case GrammarSegment.Whitespace:
-                        builder.Append(" ");
+                        builder.Append(' ');
                         break;
 
                     case GrammarSegment.Comma:
-                        builder.Append(",");
+                        builder.Append(',');
                         break;
 
                     default:
@@ -82,7 +82,6 @@ namespace ExCSS
                 }
             }
 
-            return builder.ToString();
         }
     }
 }

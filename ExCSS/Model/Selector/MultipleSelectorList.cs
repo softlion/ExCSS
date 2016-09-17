@@ -22,23 +22,23 @@ namespace ExCSS
 
         internal bool IsInvalid { get; set; }
 
-        public override string ToString(bool friendlyFormat, int indentation = 0)
+        public override void ToString(StringBuilder builder, bool friendlyFormat, int indentation = 0)
         {
-            var builder = new StringBuilder();
+            
 
             if (Selectors.Count <= 0)
             {
-                return builder.ToString();
+                return;
             }
 
-            builder.Append(Selectors[0]);
+            Selectors[0].ToString(builder);
 
             for (var i = 1; i < Selectors.Count; i++)
             {
-                builder.Append(',').Append(Selectors[i]);
+                builder.Append(',');
+                Selectors[i].ToString(builder);
             }
 
-            return builder.ToString();
         }
     }
 }

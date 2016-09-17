@@ -8,58 +8,70 @@ namespace ExCSS.Model.Extensions
 {
     public static class StringExtensions
     {
-        public static string Indent(this string value, bool friendlyForamt, int indentation)
+        
+        public static void AppendTwoDigitHex(this StringBuilder sb, byte num)
         {
-            if (!friendlyForamt)
-            {
-                return value;
-            }
+            var rem = num >> 4;
 
-            var tabs = new StringBuilder();
-            for (var i = 0; i < indentation; i++)
-            {
-                tabs.Append("\t");
-            }
-            tabs.Append(value);
-            return tabs.ToString();
+            sb.Append((char)(rem + (rem < 10 ? 48 : 55)));
+            rem = num - 16 * rem;
+            sb.Append((char)(rem + (rem < 10 ? 48 : 55)));
+
         }
-
-        public static string NewLineIndent(this string value, bool friendlyFormat, int indentation)
+        public static void Indent(this StringBuilder sb, string value, bool friendlyFormat, int indentation)
         {
             if (!friendlyFormat)
             {
-                return value;
+                sb.Append(value);
+                return;
             }
 
-            return Environment.NewLine + value.Indent(true, indentation);
-        }
 
-        public static string TrimFirstLine(this string value)
-        {
-            return new StringBuilder(value).TrimFirstLine().ToString();
-        }
-
-        public static StringBuilder TrimLastLine(this StringBuilder builder)
-        {
-            if (builder.Length == 0) return builder;
-
-            while (builder[builder.Length-1] == '\r' || builder[builder.Length-1] == '\n' || builder[builder.Length-1] == '\t')
+            for (var i = 0; i < indentation; i++)
             {
-                builder.Remove(builder.Length - 1, 1);
+                sb.Append('\t');
             }
-
-            return builder;
+            sb.Append(value);
         }
 
-        public static StringBuilder TrimFirstLine(this StringBuilder builder)
+        public static void Indent(this StringBuilder sb, bool friendlyFormat, int indentation)
         {
-            if (builder.Length == 0) return builder;
-            while (builder[0] == '\r' || builder[0] == '\n' || builder[0] == '\t')
+            if (!friendlyFormat) return;
+
+            for (var i = 0; i < indentation; i++)
             {
-                builder.Remove(0, 1);
+                sb.Append('\t');
+            }
+        }
+
+        
+        public static void NewLineIndent(this StringBuilder sb, string value, bool friendlyFormat, int indentation)
+        {
+            if (!friendlyFormat)
+            {
+                sb.Append(value);
+                return;
             }
 
-            return builder;
+            sb.AppendLine();
+            sb.Indent(value, true, indentation);
         }
+
+
+        public static void NewLineIndent(this StringBuilder sb, bool friendlyFormat, int indentation)
+        {
+            if (!friendlyFormat)
+            {
+                return;
+            }
+
+            sb.AppendLine();
+            for (var i = 0; i < indentation; i++)
+            {
+                sb.Append('\t');
+            }
+        }
+
+        
     }
 }

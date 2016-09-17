@@ -2,6 +2,8 @@
 using System.Runtime.InteropServices;
 using ExCSS.Model;
 using ExCSS.Model.Extensions;
+using System.Text;
+using Shaman.Runtime;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -179,37 +181,53 @@ namespace ExCSS
             return unchecked(A + (R << 8) + (G << 16) + (B << 24));
         }
 
-        public override string ToString()
+        
+        public override void ToString(StringBuilder sb)
         {
-            return ToString(false);
-        }
-
-        public string ToString(bool friendlyFormat, int indentation = 0)
-        {
-            return ToCss().Indent(friendlyFormat, indentation);
+            ToCss(sb);
         }
 
         /// <summary>
         /// Return the shortest form possible
         /// </summary>
-        string ToCss()
+        void ToCss(StringBuilder sb)
         {
             if (A == 255 && ((R >> 4) == (R & 0x0F)) && ((G >> 4) == (G & 0x0F)) && ((B >> 4) == (B & 0x0F)))
-                return "#" + R.ToHexChar().ToString() + G.ToHexChar().ToString() + B.ToHexChar().ToString();
+            {
+                sb.Append('#');
+                sb.Append(R.ToHexChar());
+                sb.Append(G.ToHexChar());
+                sb.Append(B.ToHexChar());
+                return;
+            }
+                
 
             if (A == 255)
             {
-                return "#" + R.ToHex() + G.ToHex() + B.ToHex();
+                sb.Append('#');
+                sb.AppendTwoDigitHex(R);
+                sb.AppendTwoDigitHex(G);
+                sb.AppendTwoDigitHex(B);
+
+                return;
                 //return "rgb(" + R + ", " + G + ", " + B + ")";
             }
 
-            return "rgba(" + R + ", " + G + ", " + B + ", " +
+            sb.Append("rgba(");
+            sb.AppendFast(R);
+            sb.Append(", ");
+            sb.AppendFast(G);
+            sb.Append(", ");
+            sb.AppendFast(B);
+            sb.Append(", ");
+            sb.Append(
 #if SALTARELLE
                 Alpha.ToPrecision(3)
 #else
-                Alpha.ToString("0.##") 
+                Alpha.ToString("0.##")
 #endif
-                + ")";
+                );
+            sb.Append(')');
         }
 
         public bool Equals(HtmlColor other)

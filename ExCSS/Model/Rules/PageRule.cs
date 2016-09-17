@@ -1,5 +1,6 @@
 ﻿using ExCSS.Model;
 using ExCSS.Model.Extensions;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -8,7 +9,6 @@ namespace ExCSS
     {
         private readonly StyleDeclaration _declarations;
         private BaseSelector _selector;
-        private string _selectorText;
 
         public PageRule() 
         {
@@ -28,7 +28,6 @@ namespace ExCSS
             set
             {
                 _selector = value;
-                _selectorText = value.ToString();
             }
         }
 
@@ -37,22 +36,22 @@ namespace ExCSS
             get { return _declarations; }
         }
 
-        public override string ToString()
+     
+
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            return ToString(false);
-        }
+            sb.NewLineIndent(friendlyFormat, indentation);
+            sb.Append("@page ");
+            
+            if (_selector != null)
+            {
+                sb.Append(':');
+                _selector.ToString(sb);
+            }
+            sb.Append('{');
 
-        public override string ToString(bool friendlyFormat, int indentation = 0)
-        {
-            var pseudo = string.IsNullOrEmpty(_selectorText)
-                             ? ""
-                             : ":" + _selectorText;
-
-            var declarations = _declarations.ToString(friendlyFormat, indentation);//.TrimFirstLine();
-
-            return ("@page " + pseudo + "{").NewLineIndent(friendlyFormat, indentation) +
-                declarations +
-                "}".NewLineIndent(friendlyFormat, indentation);
+            _declarations.ToString(sb, friendlyFormat, indentation);
+            sb.NewLineIndent("}", friendlyFormat, indentation);
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using ExCSS.Model.Extensions;
+using System.Text;
+using System;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -25,21 +27,21 @@ namespace ExCSS
 
         public bool IsSupported{ get; set; }
 
-        public override string ToString()
+
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            return ToString(false);
+            sb.NewLineIndent(friendlyFormat, indentation);
+            sb.Append('@');
+            sb.Append(AtRuleKeyword);
+            sb.Append(' ');
+            sb.Append(_condition);
+            sb.Append('{');
+
+            RuleSetsToString(sb, friendlyFormat, indentation);
+
+            sb.NewLineIndent("}", friendlyFormat, indentation);
         }
 
-        public override string ToString(bool friendlyFormat, int indentation = 0)
-        {
-            var join = friendlyFormat ? "".NewLineIndent(true, indentation + 1) : "";
-
-            var declarationList = RuleSets.Select(d => d.ToString(friendlyFormat, indentation + 1).TrimFirstLine());
-            var declarations = string.Join(join, declarationList);
-
-            return ("@" + AtRuleKeyword + " " + _condition + "{").NewLineIndent(friendlyFormat, indentation) +
-                declarations.TrimFirstLine().NewLineIndent(friendlyFormat, indentation + 1) +
-                "}".NewLineIndent(friendlyFormat, indentation);
-        }
+        
     }
 }

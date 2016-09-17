@@ -1,13 +1,14 @@
 ﻿using System;
 using ExCSS.Model;
 using ExCSS.Model.Extensions;
+using System.Text;
+using Shaman.Runtime;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
 {
     public class StyleRule : RuleSet, ISupportsSelector, ISupportsDeclarations
     {
-        private string _value;
         private BaseSelector _selector;
         private readonly StyleDeclaration _declarations;
 
@@ -26,17 +27,15 @@ namespace ExCSS
             set
             {
                 _selector = value;
-                _value = value.ToString();
             }
         }
 
         public string Value
         {
-            get { return _value; }
+            get { return _selector.ToString(); }
             set
             {
                 _selector = Parser.ParseSelector(value);
-                _value = value;
             }
         }
 
@@ -45,17 +44,14 @@ namespace ExCSS
             get { return _declarations; }
         }
 
-        public override string ToString()
+        
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            return ToString(false);
-        }
-
-        public override string ToString(bool friendlyFormat, int indentation = 0)
-        {
-            return _value.NewLineIndent(friendlyFormat, indentation) +
-                "{" +
-                _declarations.ToString(friendlyFormat, indentation) +
-                "}".NewLineIndent(friendlyFormat, indentation);
+            sb.NewLineIndent(friendlyFormat, indentation);
+            _selector.ToString(sb);
+            sb.Append('{');
+            _declarations.ToString(sb, friendlyFormat, indentation);
+            sb.NewLineIndent("}", friendlyFormat, indentation);
         }
     }
 }

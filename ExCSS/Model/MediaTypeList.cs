@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using ExCSS.Model.Extensions;
+using System.Text;
+using Shaman.Runtime;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -75,14 +77,21 @@ namespace ExCSS
 
         public override string ToString()
         {
-            return ToString(false);
+            var sb = ReseekableStringBuilder.AcquirePooledStringBuilder();
+            ToString(sb, false);
+            return ReseekableStringBuilder.GetValueAndRelease(sb);
         }
 
-        public string ToString(bool friendlyFormat, int indentation = 0)
+        public void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            return friendlyFormat
-                ? string.Join(", ", _media)
-                : string.Join(",", _media);
+            var first = true;
+            foreach (var item in _media)
+            {
+                if (first) first = false;
+                else sb.Append(friendlyFormat ? ", " : ",");
+                sb.Append(item);
+            }
+            
         }
 
         public IEnumerator<string> GetEnumerator()

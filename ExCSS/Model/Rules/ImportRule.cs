@@ -1,5 +1,6 @@
 ﻿using ExCSS.Model;
 using ExCSS.Model.Extensions;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -26,16 +27,23 @@ namespace ExCSS
             get { return _media; }
         }
 
-        public override string ToString()
-        {
-            return ToString(false);
-        }
+        
 
-        public override string ToString(bool friendlyFormat, int indentation = 0)
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            return _media.Count > 0
-                ? string.Format("@import url({0}) {1};", _href, _media).NewLineIndent(friendlyFormat, indentation)
-                : string.Format("@import url({0});", _href).NewLineIndent(friendlyFormat, indentation);
+            sb.NewLineIndent(friendlyFormat, indentation);
+            sb.Append("@import url(");
+            sb.Append(_href);
+            if (_media.Count > 0)
+            {
+                sb.Append(") ");
+                sb.Append(_media);
+                sb.Append(';');
+            }
+            else
+            {
+                sb.Append(");");
+            }
         }
     }
 }

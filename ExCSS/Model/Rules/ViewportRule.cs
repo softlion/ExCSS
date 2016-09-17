@@ -1,6 +1,7 @@
 ﻿using System;
 using ExCSS.Model;
 using ExCSS.Model.Extensions;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -27,19 +28,16 @@ namespace ExCSS
             get { return _declarations; }
         }
 
-        public override string ToString()
-        {
-            return ToString(false);
-        }
-
+        
         public string AtRuleKeyword { get; set; }
 
-        public override string ToString(bool friendlyFormat, int indentation = 0)
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            return
-                "@" + AtRuleKeyword + "{" +
-                _declarations.ToString(friendlyFormat, indentation) +
-                "}".NewLineIndent(friendlyFormat, indentation);
+            sb.Append('@');
+            sb.Append(AtRuleKeyword);
+            sb.Append('{');
+            _declarations.ToString(sb, friendlyFormat, indentation);
+            sb.NewLineIndent("}", friendlyFormat, indentation);
         }
     }
 }

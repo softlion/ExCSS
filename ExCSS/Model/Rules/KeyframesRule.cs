@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ExCSS.Model.Extensions;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -30,21 +31,27 @@ namespace ExCSS
             get { return _ruleSets; }
         }
 
-        public override string ToString()
+        
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            return ToString(false);
-        }
+            
 
-        public override string ToString(bool friendlyFormat, int indentation = 0)
-        {
-            var join = friendlyFormat ? "".NewLineIndent(true, indentation) : "";
+            sb.NewLineIndent(friendlyFormat, indentation);
+            sb.Append('@');
+            sb.Append(AtRuleKeyword);
+            sb.Append(' ');
+            sb.Append(_identifier);
+            sb.Append('{');
 
-            var declarationList = _ruleSets.Select(d => d.ToString(friendlyFormat, indentation + 1));
-            var declarations = string.Join(join, declarationList);
+            //if (friendlyFormat) sb.NewLineIndent("", true, indentation + 1);
+            foreach (var r in _ruleSets)
+            {
+                ///if (first) first = false;
+                if (friendlyFormat) sb.NewLineIndent("", friendlyFormat, indentation);
+                r.ToString(sb, friendlyFormat, indentation + 1);
+            }
 
-            return ("@" + AtRuleKeyword + " " + _identifier + "{").NewLineIndent(friendlyFormat, indentation) +
-                declarations.NewLineIndent(friendlyFormat, indentation) +
-                "}".NewLineIndent(friendlyFormat, indentation);
+            sb.NewLineIndent("}", friendlyFormat, indentation);                
         }
 
         public string AtRuleKeyword { get; set; }

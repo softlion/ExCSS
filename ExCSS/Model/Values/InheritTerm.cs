@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace ExCSS
 {
@@ -8,9 +9,9 @@ namespace ExCSS
         {
         }
 
-        public override string ToString()
+        public override void ToString(StringBuilder sb)
         {
-            return "inherit";
+            sb.Append( "inherit");
         }
     }
 }

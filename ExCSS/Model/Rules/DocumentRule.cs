@@ -73,16 +73,21 @@ namespace ExCSS
             get { return _conditions; }
         }
 
-        public override string ToString()
-        {
-            return ToString(false);
-        }
+        
 
-        public override string ToString(bool friendlyFormat, int indentation = 0)
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            return "@" + AtRuleKeyword + " " + ConditionText + " {" + 
-                RuleSets + 
-                "}".NewLineIndent(friendlyFormat, indentation);
+            sb.Append('@');
+            sb.Append(AtRuleKeyword);
+            sb.Append(' ');
+            sb.Append(ConditionText);
+            sb.Append(" {");
+            foreach (var r in RuleSets)
+            {
+                // TODO original code appended RuleSet.ToString()!!?
+                r.ToString(sb, friendlyFormat, indentation);
+            }
+            sb.NewLineIndent("}", friendlyFormat, indentation);
         }
     }
 }

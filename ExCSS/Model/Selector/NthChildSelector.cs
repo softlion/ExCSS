@@ -1,5 +1,7 @@
 ﻿
 // ReSharper disable once CheckNamespace
+using System.Text;
+
 namespace ExCSS
 {
     internal abstract class NthChildSelector : BaseSelector
@@ -8,17 +10,17 @@ namespace ExCSS
         public int Offset;
         internal string FunctionText { get; set; }
 
-        internal string FormatSelector(string functionName)
+        internal void FormatSelector(StringBuilder sb, string functionName)
         {
             var format = Offset < 0
                 ? ":{0}({1}n{2})"
                 : ":{0}({1}n+{2})";
 
-            return string.IsNullOrEmpty(FunctionText)
+            sb.Append(string.IsNullOrEmpty(FunctionText)
                 ? string.Format(format, functionName, Step, Offset)
-                : string.Format(":{0}({1})", functionName, FunctionText);
+                : string.Format(":{0}({1})", functionName, FunctionText));
         }
 
-        public abstract override string ToString(bool friendlyFormat, int indentation = 0);
+        public abstract override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0);
     }
 }
