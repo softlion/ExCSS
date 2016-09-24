@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,19 +10,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ExCSS</RootNamespace>
     <AssemblyName>ExCSS</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <OldToolsVersion>4.0</OldToolsVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\ExCSS\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <OldToolsVersion>2.0</OldToolsVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -35,9 +28,12 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\ExCSS\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -67,10 +63,18 @@
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Shaman.ValueString, Version=1.0.0.0, Culture=neutral, PublicKeyToken=18bc04d2eb1e1518, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shaman.ValueString.1.0.2.19\lib\net46\Shaman.ValueString.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DocumentFunctionStringPair.cs" />
     <Compile Include="IToString.cs" />
     <Compile Include="Model\Enumerations.cs" />
     <Compile Include="Model\FunctionBuffer.cs" />
@@ -78,11 +82,9 @@
     <Compile Include="Model\ICssRules.cs" />
     <Compile Include="Model\ICssSelector.cs" />
     <Compile Include="Model\IStyleDeclaration.cs" />
+    <Compile Include="Model\Rules\ViewportRule.cs" />
     <Compile Include="Model\Selector\NthOfTypeSelector.cs" />
     <Compile Include="Model\Selector\NthLastOfTypeSelector.cs" />
-    <Compile Include="Model\Values\Comma.cs" />
-    <Compile Include="Model\Values\EqualSign.cs" />
-    <Compile Include="Model\Values\Whitespace.cs" />
     <Compile Include="StylesheetParseError.cs" />
     <Compile Include="StyleSheet.cs" />
     <Compile Include="Model\Extensions\CharacterExtensions.cs" />
@@ -145,6 +147,7 @@
     <Compile Include="Model\Selector\BaseSelector.cs" />
     <Compile Include="Model\Values\HtmlColor.cs" />
     <Compile Include="Model\Values\InheritTerm.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -165,13 +168,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ExCSS.snk" />
-    <None Include="project.json" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
@@ -183,9 +188,6 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-
   <Target Name="AfterBuild" Condition="'$(Configuration)' == 'Release'">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="ExCSSAssemblyInfo" />
@@ -196,7 +198,7 @@
     <PropertyGroup>
       <ExCSSSemVer>$(ExCSSAssemblyVersion.SubString(0, $(ExCSSAssemblyVersion.LastIndexOf('.'))))</ExCSSSemVer>
     </PropertyGroup>
-    <Exec Command="&quot;$(SolutionDir).nuget\nuget&quot; pack &quot;$(SolutionDir)NuSpec\ExCSS.nuspec&quot; -Version $(ExCSSSemVer) -o &quot;$(SolutionDir)NuSpec&quot;" />
-    <Message Text="&quot;$(SolutionDir).nuget\nuget&quot; pack &quot;$(SolutionDir)NuSpec\ExCSS.nuspec&quot; -Version $(ExCSSSemVer)" Importance="high" />
+    <Exec Command="$(SolutionDir).nuget\nuget pack $(SolutionDir)\NuSpec\ExCSS.nuspec -Version $(ExCSSSemVer) -o $(SolutionDir)\NuSpec" />
+    <Message Text="$(SolutionDir).nuget\nuget pack $(SolutionDir)\NuSpec\ExCSS.nuspec -Version $(ExCSSSemVer)" Importance="high" />
   </Target>
 </Project>

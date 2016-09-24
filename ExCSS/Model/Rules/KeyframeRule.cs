@@ -1,39 +1,37 @@
-﻿using System.Collections.Generic;
-using ExCSS.Model;
+﻿using ExCSS.Model;
 using ExCSS.Model.Extensions;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
 {
     public class KeyframeRule : RuleSet, ISupportsDeclarations
     {
-        private List<string> _values { get; set; }
+        private string _value;
+
         public KeyframeRule()
         {
             Declarations = new StyleDeclaration();
             RuleType = RuleType.Keyframe;
-            _values = new List<string>();
         }
 
-        public void AddValue(string value)
+        public string Value
         {
-            _values.Add(value);
+            get { return _value; }
+            set { _value = value; }
         }
 
         public StyleDeclaration Declarations { get; private set; }
 
-        public override string ToString()
-        {
-            return ToString(false);
-        }
+        
 
-        public override string ToString(bool friendlyFormat, int indentation = 0)
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            return string.Empty.Indent(friendlyFormat, indentation) +
-                string.Join(",", _values) + 
-                "{" + 
-                Declarations.ToString(friendlyFormat, indentation) +
-                "}".NewLineIndent(friendlyFormat, indentation);
+            sb.Indent(string.Empty, friendlyFormat, indentation);
+            sb.Append(_value);
+            sb.Append('{');
+            Declarations.ToString(sb, friendlyFormat, indentation);
+            sb.NewLineIndent("}", friendlyFormat, indentation);
         }
     }
 }

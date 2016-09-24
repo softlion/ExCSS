@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Text;
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -18,27 +21,17 @@ namespace ExCSS
             Delimiter = delimiter;
         }
 
-        public override string ToString(bool friendlyFormat, int indentation = 0)
+        public override void ToString(StringBuilder builder, bool friendlyFormat, int indentation = 0)
         {
-            var builder = new StringBuilder();
-
+            var first = true;
             foreach (var selector in Selectors)
             {
-                builder.Append(selector.ToString(friendlyFormat, indentation + 1));                    
-                builder.Append(Delimiter);
+                if (first) first = false;
+                else builder.Append(Delimiter);
+                selector.ToString(builder, friendlyFormat, indentation + 1);                    
+                
             }
            
-            if (Delimiter.Length <= 0)
-            {
-                return builder.ToString();
-            }
-           
-            if (builder.Length > 0)
-            {
-                builder.Remove(builder.Length - 1, 1);
-            }
-
-            return builder.ToString();
         }
     }
 }

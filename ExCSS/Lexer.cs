@@ -4,6 +4,10 @@ using System.Globalization;
 using System.Text;
 using ExCSS.Model;
 using ExCSS.Model.TextBlocks;
+using Shaman.Runtime;
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -71,16 +75,9 @@ namespace ExCSS
                 case Specification.Asterisk:
                     current = _stylesheetReader.Next;
 
-                    if (current.IsNameStart())
-                    {
-                        return IdentStart(_stylesheetReader.Previous);
-                    }
-                    else
-                    {
-                        return current == Specification.EqualSign
-                            ? MatchBlock.Substring
-                            : Block.Delim(_stylesheetReader.Previous);
-                    }
+                    return current == Specification.EqualSign
+                        ? MatchBlock.Substring
+                        : Block.Delim(_stylesheetReader.Previous);
 
                 case Specification.PlusSign:
                     {
@@ -93,7 +90,7 @@ namespace ExCSS
                         else
                         {
                             var nextSEcond = _stylesheetReader.Next;
-                            _stylesheetReader.Back(2);
+                            _stylesheetReader.Back2();
 
                             if (nextFirst.IsDigit() || (nextFirst == Specification.Period && nextSEcond.IsDigit()))
                             {
@@ -127,7 +124,7 @@ namespace ExCSS
                         else
                         {
                             var nextSecond = _stylesheetReader.Next;
-                            _stylesheetReader.Back(2);
+                            _stylesheetReader.Back2();
 
                             if (nextFirst.IsDigit() || (nextFirst == Specification.Period && nextSecond.IsDigit()))
                             {
@@ -157,7 +154,6 @@ namespace ExCSS
                     }
 
                 case Specification.Solidus:
-
                     current = _stylesheetReader.Next;
 
                     return current == Specification.Asterisk
@@ -172,7 +168,7 @@ namespace ExCSS
                         ErrorHandler(current == Specification.EndOfFile
                             ? ParserError.EndOfFile
                             : ParserError.UnexpectedLineBreak,
-                            ErrorMessages.LineBreakEof);
+                            ErrorMessages.LineBreakEof); 
 
                         return Block.Delim(_stylesheetReader.Previous);
                     }
@@ -314,8 +310,8 @@ namespace ExCSS
 
                     case Specification.FormFeed:
                     case Specification.LineFeed:
-                        ErrorHandler(ParserError.UnexpectedLineBreak, ErrorMessages.DoubleQuotedString);
-                        _stylesheetReader.Back();
+                        ErrorHandler(ParserError.UnexpectedLineBreak,ErrorMessages.DoubleQuotedString);
+                         _stylesheetReader.Back();
                         return StringBlock.Plain(FlushBuffer(), true);
 
                     case Specification.ReverseSolidus:
@@ -394,7 +390,7 @@ namespace ExCSS
 
         private Block HashStart(char current)
         {
-            if (current.IsNameStart() || current.IsDigit())
+            if (current.IsNameStart())
             {
                 _buffer.Append(current);
                 return HashRest(_stylesheetReader.Next);
@@ -460,17 +456,8 @@ namespace ExCSS
                             return DataBlock(_stylesheetReader.Next);
                         }
                         break;
-                    case Specification.Solidus:
-                        {
-                            if (_stylesheetReader.Previous == Specification.Asterisk)
-                            {
-                                return DataBlock(_stylesheetReader.Next);
-                            }
-                            current = _stylesheetReader.Next;
-                            break;
-                        }
-                    case Specification.EndOfFile:
 
+                    case Specification.EndOfFile:
                         ErrorHandler(ParserError.EndOfFile, ErrorMessages.ExpectedCommentEnd);
 
                         return DataBlock(current);
@@ -492,7 +479,7 @@ namespace ExCSS
                     return AtKeywordRest(current);
                 }
 
-                _stylesheetReader.Back(2);
+                _stylesheetReader.Back2();
 
                 return Block.Delim(Specification.At);
             }
@@ -554,7 +541,7 @@ namespace ExCSS
                 return Block.Delim(Specification.MinusSign);
             }
 
-            if (current.IsNameStart() || current == Specification.Asterisk)
+            if (current.IsNameStart())
             {
                 _buffer.Append(current);
                 return IdentRest(_stylesheetReader.Next);
@@ -608,10 +595,6 @@ namespace ExCSS
                             return SymbolBlock.Function(FlushBuffer());
                     }
 
-                }
-                else if (current == Specification.Period)
-                {
-                    _buffer.Append(current);
                 }
                 else
                 {
@@ -863,7 +846,7 @@ namespace ExCSS
 
                     if (current == Specification.EndOfFile)
                     {
-                        _stylesheetReader.Back(2);
+                        _stylesheetReader.Back2();
                         ErrorHandler(ParserError.EndOfFile, ErrorMessages.InvalidUrlEnd);
                         return StringBlock.Url(FlushBuffer(), true);
                     }
@@ -912,7 +895,7 @@ namespace ExCSS
 
                     if (current == Specification.EndOfFile)
                     {
-                        _stylesheetReader.Back(2);
+                        _stylesheetReader.Back2();
                         ErrorHandler(ParserError.EndOfFile, ErrorMessages.SingleQuotedString);
                         return StringBlock.Url(FlushBuffer(), true);
                     }
@@ -1081,7 +1064,7 @@ namespace ExCSS
                     return Block.Range(start, end);
                 }
 
-                _stylesheetReader.Back(2);
+                _stylesheetReader.Back2();
                 return Block.Range(FlushBuffer(), null);
 
             }
@@ -1092,7 +1075,7 @@ namespace ExCSS
 
         private string FlushBuffer()
         {
-            var value = _buffer.ToString();
+            var value = _buffer.ToStringCached();
             _buffer.Clear();
             return value;
         }
@@ -1106,7 +1089,7 @@ namespace ExCSS
                 _buffer.Append('e').Append(current);
                 return SciNotation(_stylesheetReader.Next);
             }
-
+            
             if (current == Specification.PlusSign || current == Specification.MinusSign)
             {
                 var op = current;
@@ -1138,7 +1121,7 @@ namespace ExCSS
                 _buffer.Append(Specification.MinusSign).Append(current);
                 return Dimension(_stylesheetReader.Next, number);
             }
-
+            
             if (IsValidEscape(current))
             {
                 current = _stylesheetReader.Next;
@@ -1146,8 +1129,8 @@ namespace ExCSS
                 _buffer.Append(Specification.MinusSign).Append(ConsumeEscape(current));
                 return Dimension(_stylesheetReader.Next, number);
             }
-
-            _stylesheetReader.Back(2);
+       
+            _stylesheetReader.Back2();
             return Block.Number(FlushBuffer());
         }
 
@@ -1172,8 +1155,12 @@ namespace ExCSS
             }
 
             current = _stylesheetReader.Previous;
+#if SALTARELLE
+            var code = int.Parse(new string((char[])(dynamic)escape), 16);
+#else
             var code = int.Parse(new string(escape.ToArray()), NumberStyles.HexNumber);
-            return Char.ConvertFromUtf32(code);
+#endif
+            return Utils.ConvertFromUtf32(code);
         }
 
         private bool IsValidEscape(char current)
@@ -1190,7 +1177,7 @@ namespace ExCSS
             {
                 return false;
             }
-
+            
             return !current.IsLineBreak();
         }
 

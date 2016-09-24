@@ -1,13 +1,16 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
+
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
 {
-    public class TermList : Term, IEnumerable<Term>
+    public class TermList : Term
     {
         private readonly List<GrammarSegment> _separator = new List<GrammarSegment>();
         private readonly List<Term> _items = new List<Term>();
@@ -16,49 +19,24 @@ namespace ExCSS
         {
         }
 
-        public TermList(params Term[] terms)
-            : this(TermSeparator.Comma,terms)
+        internal void AddTerm(Term term)
         {
-        }
-
-        public TermList(TermSeparator separator, params Term[] terms)
-        {
-            for (var i = 0; i < terms.Length; ++i)
+            if (_items.Count != _separator.Count)
             {
-                AddTerm(terms[i]);
-                if (i != terms.Length - 1)
-                {
-                    AddSeparator(separator);
-                }
+                return;
             }
-        }
 
-        public void AddTerm(Term term)
-        {
             _items.Add(term);
         }
 
         internal void AddSeparator(GrammarSegment termSepertor)
         {
-            _separator.Add(termSepertor);
-        }
-
-        public void AddSeparator(TermSeparator termSepertor)
-        {
-            switch (termSepertor)
+            if (_items.Count != _separator.Count + 1)
             {
-                case TermSeparator.Comma:
-                    _separator.Add(GrammarSegment.Comma);
-                    break;
-                case TermSeparator.Space:
-                    _separator.Add(GrammarSegment.Whitespace);
-                    break;
-                case TermSeparator.Colon:
-                    _separator.Add(GrammarSegment.Colon);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("termSepertor");
+                return;
             }
+
+            _separator.Add(termSepertor);
         }
 
         public int Length
@@ -69,10 +47,8 @@ namespace ExCSS
         [IndexerName("ListItems")]
         public Term this [int index]
         {
-            get
-            {
-                return index >= 0 && index < _items.Count ? _items[index] : null;
-            }
+            //return index >= 0 && index < _items.Count ? _items[index] : null; 
+            get { return _items[index]; }
         }
 
         public Term Item(int index)
@@ -80,33 +56,25 @@ namespace ExCSS
             return this[index];
         }
 
-        public IEnumerator<Term> GetEnumerator()
+        public override void ToString(StringBuilder builder)
         {
-            return _items.GetEnumerator();
-        }
-
-        public override string ToString()
-        {
-            var builder = new StringBuilder();
+            
 
             for (var i = 0; i < _items.Count; i++)
             {
-                builder.Append(_items[i]);
+                _items[i].ToString(builder);
 
-                if (_separator.Count - 1 < i) continue;
+                if (i == _separator.Count)
+                    break;
 
                 switch (_separator[i])
                 {
                     case GrammarSegment.Whitespace:
-                        builder.Append(" ");
+                        builder.Append(' ');
                         break;
 
                     case GrammarSegment.Comma:
-                        builder.Append(",");
-                        break;
-
-                    case GrammarSegment.Colon:
-                        builder.Append(":");
+                        builder.Append(',');
                         break;
 
                     default:
@@ -114,32 +82,6 @@ namespace ExCSS
                 }
             }
 
-            return builder.ToString();
         }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _items.GetEnumerator();
-        }
-
-        /// <summary>
-        /// exposed enumeration for the adding of separators into term lists
-        /// </summary>
-        public enum TermSeparator
-        {
-            Comma,
-            Space,
-            Colon,
-        }
-
-        #region Internal Methods
-        internal void SetLastTerm(Term term)
-        {
-            if (Length == 0)
-                AddTerm(term);
-            else
-                _items[Length - 1] = term;
-        }
-        #endregion
     }
 }

@@ -1,8 +1,12 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 using ExCSS.Model;
 using ExCSS.Model.TextBlocks;
+using Shaman.Runtime;
+
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
 
 namespace ExCSS
 {
@@ -105,17 +109,36 @@ namespace ExCSS
                 case ParsingContext.InFunction:
 
                     return ParseValueFunction(token);
+
+                case ParsingContext.BeforeViewportDeclaration:
+                    return ParseViewport(token);
                 default:
                     return false;
             }
+        }
+
+        private bool ParseViewport(Block token)
+        {
+            if (token.GrammarSegment == GrammarSegment.CurlyBraceOpen)
+            {
+                SetParsingContext(ParsingContext.InDeclaration);
+                return true;
+            }
+            return false;
         }
 
         private bool ParseSymbol(Block token)
         {
             if (token.GrammarSegment == GrammarSegment.AtRule)
             {
-                var value = ((SymbolBlock)token).Value;
-                switch (value)
+                var orig = ((SymbolBlock)token).Value;
+                var val = orig;
+                if (val.Length != 0 && val[0] == '-')
+                {
+                    var s = val.IndexOf('-', 1);
+                    if (s != -1) val = val.Substring(s + 1);
+                }
+                switch (val)
                 {
                     case RuleTypes.Media:
                         {
@@ -138,7 +161,7 @@ namespace ExCSS
                         }
                     case RuleTypes.FontFace:
                         {
-                            AddRuleSet(new FontFaceRule());
+                            AddRuleSet(new FontFaceRule() { AtRuleKeyword = orig });
                             //SetParsingContext(ParsingContext.InDeclaration);
                             SetParsingContext(ParsingContext.BeforeFontFace);
                             break;
@@ -158,24 +181,26 @@ namespace ExCSS
                     case RuleTypes.Supports:
                         {
                             _buffer = new StringBuilder();
-                            AddRuleSet(new SupportsRule());
+                            AddRuleSet(new SupportsRule() { AtRuleKeyword = orig });
                             SetParsingContext(ParsingContext.InCondition);
                             break;
                         }
-                    case BrowserPrefixes.Microsoft + RuleTypes.Keyframes:
-                    case BrowserPrefixes.Mozilla + RuleTypes.Keyframes:
-                    case BrowserPrefixes.Opera + RuleTypes.Keyframes:
-                    case BrowserPrefixes.Webkit + RuleTypes.Keyframes:
                     case RuleTypes.Keyframes:
                         {
-                            AddRuleSet(new KeyframesRule(value));
+                            AddRuleSet(new KeyframesRule() { AtRuleKeyword = orig });
                             SetParsingContext(ParsingContext.BeforeKeyframesName);
                             break;
                         }
                     case RuleTypes.Document:
                         {
-                            AddRuleSet(new DocumentRule());
+                            AddRuleSet(new DocumentRule() { AtRuleKeyword = orig });
                             SetParsingContext(ParsingContext.BeforeDocumentFunction);
+                            break;
+                        }
+                    case RuleTypes.Viewport:
+                        {
+                            AddRuleSet(new ViewportRule() { AtRuleKeyword = orig });
+                            SetParsingContext(ParsingContext.BeforeViewportDeclaration);
                             break;
                         }
                     default:
@@ -194,10 +219,6 @@ namespace ExCSS
             if (token.GrammarSegment == GrammarSegment.CurlyBracketClose)
             {
                 return FinalizeRule();
-            }
-            if (token.GrammarSegment == GrammarSegment.Semicolon)
-            {
-                return true;
             }
 
             AddRuleSet(new StyleRule());
@@ -219,7 +240,7 @@ namespace ExCSS
 
                 case GrammarSegment.CurlyBraceOpen:
                     CastRuleSet<GenericRule>().SetCondition(_buffer.ToString());
-                    SetParsingContext(ParsingContext.InDeclaration);
+                    SetParsingContext(ParsingContext.DataBlock);
                     break;
 
                 default:
@@ -409,17 +430,9 @@ namespace ExCSS
                     SetParsingContext(ParsingContext.InValuePool);
                     return true;
 
-                case GrammarSegment.Colon: // ":"
-                    _terms.AddSeparator(GrammarSegment.Colon);
-                    return true;
-
                 case GrammarSegment.Semicolon: // ";"
                 case GrammarSegment.CurlyBracketClose: // "}"
                     return ParsePostValue(token);
-
-                case GrammarSegment.ParenClose: // ")"
-                    SetParsingContext(ParsingContext.AfterValue);
-                    return true;
 
                 default:
                     return false;
@@ -431,31 +444,14 @@ namespace ExCSS
             switch (token.GrammarSegment)
             {
                 case GrammarSegment.ParenClose:
-                {
-                    var functionBuffer = _functionBuffers.Pop().Done();
-                    if (_functionBuffers.Any()) return AddTerm(functionBuffer);
-
-                        SetParsingContext(ParsingContext.InSingleValue);
-                    return AddTerm(functionBuffer);
-                }
-                case GrammarSegment.Whitespace:
-                {
-                    if (!_functionBuffers.Any()) return AddTerm(new Whitespace());
-
-                    var functionBuffer = _functionBuffers.Peek();
-                    var lastTerm = functionBuffer.TermList.LastOrDefault();
-
-                    if (lastTerm is Comma || lastTerm is Whitespace)
-                        return true;
-
-                    return AddTerm(new Whitespace());
-                }
+                    if (_functionBuffers.Count == 1) SetParsingContext(ParsingContext.InSingleValue);
+                    else if (_functionBuffers.Count == 0) return false;
+                    return AddTerm(_functionBuffers.Pop().Done());
 
                 case GrammarSegment.Comma:
-                    return AddTerm(new Comma());
-					
-                case GrammarSegment.Delimiter:
-                    return AddTerm(new EqualSign());
+                    if (_functionBuffers.Count == 0) return false;
+                    _functionBuffers.Peek().Include();
+                    return true;
 
                 default:
                     return ParseSingleValue(token);
@@ -516,8 +512,9 @@ namespace ExCSS
                     break;
             }
 
-            ParseSingleValueHexColor(_buffer.ToString());
+            ParseSingleValueHexColor(_buffer.ToStringCached());
             SetParsingContext(ParsingContext.InSingleValue);
+            if (token.GrammarSegment == GrammarSegment.ParenClose) return ParseValueFunction(token);
             return ParseSingleValue(token);
         }
 
@@ -579,7 +576,8 @@ namespace ExCSS
             {
                 return AddTerm(new PrimitiveTerm(UnitType.Ident, token.Value));
             }
-            _terms.AddTerm(Term.Inherit);
+
+            _property.Term = Term.Inherit;
             SetParsingContext(ParsingContext.AfterValue);
             return true;
         }
@@ -698,13 +696,11 @@ namespace ExCSS
 
             return ParseKeyframeText(token);
         }
-        
-        private KeyframeRule _frame;
+
         private bool ParseKeyframeText(Block token)
         {
             if (token.GrammarSegment == GrammarSegment.CurlyBraceOpen)
             {
-                _frame = null;
                 SetParsingContext(ParsingContext.InDeclaration);
                 return true;
             }
@@ -712,27 +708,28 @@ namespace ExCSS
             if (token.GrammarSegment == GrammarSegment.CurlyBracketClose)
             {
                 ParseKeyframesData(token);
+
                 return false;
             }
 
             if (token.GrammarSegment == GrammarSegment.Comma)
             {
-                return true;
+                if (_activeRuleSets.Count != 0 && _activeRuleSets.Peek() is KeyframeRule)
+                    FinalizeRule();
+                SetParsingContext(ParsingContext.KeyframesData);
+                return false;
             }
 
-            if (_frame == null)
+            var frame = new KeyframeRule
             {
-                _frame = new KeyframeRule();
-                _frame.AddValue(token.ToString());
+                Value = token.ToString()
+            };
 
-                CastRuleSet<KeyframesRule>().Declarations.Add(_frame);
-                _activeRuleSets.Push(_frame);
-            }
-            else
-            {
-                _frame.AddValue(token.ToString());
-            }
-      
+
+            var ruleset = CastRuleSet<KeyframesRule>();
+            if (ruleset != null) ruleset.Declarations.Add(frame);
+            _activeRuleSets.Push(frame);
+
             return true;
         }
         #endregion
@@ -769,15 +766,15 @@ namespace ExCSS
             switch (token.GrammarSegment)
             {
                 case GrammarSegment.Url:
-                    CastRuleSet<DocumentRule>().Conditions.Add(Tuple.Create(DocumentFunction.Url, ((StringBlock)token).Value));
+                    CastRuleSet<DocumentRule>().Conditions.Add(new DocumentFunctionStringPair(DocumentFunction.Url, ((StringBlock)token).Value));
                     break;
 
                 case GrammarSegment.UrlPrefix:
-                    CastRuleSet<DocumentRule>().Conditions.Add(Tuple.Create(DocumentFunction.UrlPrefix, ((StringBlock)token).Value));
+                    CastRuleSet<DocumentRule>().Conditions.Add(new DocumentFunctionStringPair(DocumentFunction.UrlPrefix, ((StringBlock)token).Value));
                     break;
 
                 case GrammarSegment.Domain:
-                    CastRuleSet<DocumentRule>().Conditions.Add(Tuple.Create(DocumentFunction.Domain, ((StringBlock)token).Value));
+                    CastRuleSet<DocumentRule>().Conditions.Add(new DocumentFunctionStringPair(DocumentFunction.Domain, ((StringBlock)token).Value));
                     break;
 
                 case GrammarSegment.Function:
@@ -803,7 +800,7 @@ namespace ExCSS
             SetParsingContext(ParsingContext.AfterDocumentFunction);
 
             if (token.GrammarSegment != GrammarSegment.String) return false;
-            CastRuleSet<DocumentRule>().Conditions.Add(Tuple.Create(DocumentFunction.RegExp, ((StringBlock)token).Value));
+            CastRuleSet<DocumentRule>().Conditions.Add(new DocumentFunctionStringPair(DocumentFunction.RegExp, ((StringBlock)token).Value));
             return true;
         }
 

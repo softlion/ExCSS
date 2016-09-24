@@ -18,8 +18,11 @@ namespace ExCSS.Model.TextBlocks
 
         internal RangeBlock SetRange(string start, string end)
         {
+#if SALTARELLE
+            var startValue = int.Parse(start, 16);
+#else
             var startValue = int.Parse(start, System.Globalization.NumberStyles.HexNumber);
-
+#endif
             if (startValue > Specification.MaxPoint)
             {
                 return this;
@@ -27,12 +30,16 @@ namespace ExCSS.Model.TextBlocks
 
             if (end == null)
             {
-                SelectedRange = new [] { char.ConvertFromUtf32(startValue) };
+                SelectedRange = new [] { Utils.ConvertFromUtf32(startValue) };
             }
             else
             {
                 var list = new List<string>();
+#if SALTARELLE
+                var endValue = int.Parse(end, 16);
+#else
                 var endValue = int.Parse(end, System.Globalization.NumberStyles.HexNumber);
+#endif
 
                 if (endValue > Specification.MaxPoint)
                 {
@@ -41,7 +48,7 @@ namespace ExCSS.Model.TextBlocks
 
                 for (; startValue <= endValue; startValue++)
                 {
-                    list.Add(char.ConvertFromUtf32(startValue));
+                    list.Add(Utils.ConvertFromUtf32(startValue));
                 }
 
                 SelectedRange = list.ToArray();
@@ -59,11 +66,27 @@ namespace ExCSS.Model.TextBlocks
 
             if (SelectedRange.Length == 1)
             {
-                return "#" + char.ConvertToUtf32(SelectedRange[0], 0).ToString("x");
+                return "#" + Utils.ConvertToUtf32(SelectedRange[0], 0)
+#if SALTARELLE
+                .ToString(16);
+#else
+                .ToString("x");
+#endif
             }
 
-            return "#" + char.ConvertToUtf32(SelectedRange[0], 0).ToString("x") + "-#" + 
-                char.ConvertToUtf32(SelectedRange[SelectedRange.Length - 1], 0).ToString("x");
+            return "#" + Utils.ConvertToUtf32(SelectedRange[0], 0)
+#if SALTARELLE
+                .ToString(16)
+#else
+                .ToString("x")
+#endif
+            + "-#" +
+            Utils.ConvertToUtf32(SelectedRange[SelectedRange.Length - 1], 0)
+#if SALTARELLE
+                .ToString(16);
+#else
+                .ToString("x");
+#endif
         }
     }
 }

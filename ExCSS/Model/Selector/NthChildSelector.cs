@@ -1,24 +1,40 @@
 ﻿
 // ReSharper disable once CheckNamespace
+using Shaman.Runtime;
+using System.Text;
+
 namespace ExCSS
 {
-    internal abstract class NthChildSelector : BaseSelector, IToString
+    internal abstract class NthChildSelector : BaseSelector
     {
         public int Step;
         public int Offset;
         internal string FunctionText { get; set; }
 
-        internal string FormatSelector(string functionName)
+        internal void FormatSelector(StringBuilder sb, string functionName)
         {
-            var format = Offset < 0
-                ? ":{0}({1}n{2})"
-                : ":{0}({1}n+{2})";
+            sb.Append(':');
+            sb.Append(functionName);
+            sb.Append('(');
 
-            return string.IsNullOrEmpty(FunctionText)
-                ? string.Format(format, functionName, Step, Offset)
-                : string.Format(":{0}({1})", functionName, FunctionText);
+            if (string.IsNullOrEmpty(FunctionText))
+            {
+                sb.AppendFast(Step);
+                sb.Append('n');
+
+                if (Offset >= 0) sb.Append('+');
+                
+                sb.AppendFast(Offset);
+            }
+            else
+            {
+                sb.Append(FunctionText);
+            }
+            sb.Append(')');
+
+
         }
 
-        public abstract override string ToString(bool friendlyFormat, int indentation = 0);
+        public abstract override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0);
     }
 }

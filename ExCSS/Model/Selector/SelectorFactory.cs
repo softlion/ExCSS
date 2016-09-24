@@ -224,7 +224,11 @@ namespace ExCSS
                     break;
 
                 case GrammarSegment.Number:
+#if SALTARELLE
+                    _attributeValue = ((NumericBlock)token).Value.ToString();
+#else
                     _attributeValue = ((NumericBlock)token).Value.ToString(CultureInfo.InvariantCulture);
+#endif
                     break;
 
                 default:
@@ -318,6 +322,8 @@ namespace ExCSS
 
         private void ParsePseudoElement(Block token)
         {
+            _selectorOperation = SelectorOperation.Data;
+
             if (token.GrammarSegment != GrammarSegment.Ident)
             {
                 return;
@@ -389,7 +395,7 @@ namespace ExCSS
 
                                 if (chr == Specification.PlusSign || chr == Specification.MinusSign)
                                 {
-                                    _attributeValue += chr;
+                                    _attributeValue += chr.ToString();
                                     return;
                                 }
 
@@ -484,25 +490,25 @@ namespace ExCSS
                 case PseudoSelectorPrefix.PseudoFunctionNot:
                     {
                         var selector = _nestedSelectorFactory.GetSelector();
-                        var code = string.Format("{0}({1})", PseudoSelectorPrefix.PseudoFunctionNot, selector);
+                        var code = PseudoSelectorPrefix.PseudoFunctionNot + "("+ selector + ")";
                         Insert(SimpleSelector.PseudoClass(code));
                         break;
                     }
                 case PseudoSelectorPrefix.PseudoFunctionDir:
                     {
-                        var code = string.Format("{0}({1})", PseudoSelectorPrefix.PseudoFunctionDir, _attributeValue);
+                        var code = PseudoSelectorPrefix.PseudoFunctionDir + "(" + _attributeValue + ")";
                         Insert(SimpleSelector.PseudoClass(code));
                         break;
                     }
                 case PseudoSelectorPrefix.PseudoFunctionLang:
                     {
-                        var code = string.Format("{0}({1})", PseudoSelectorPrefix.PseudoFunctionLang, _attributeValue);
+                        var code = PseudoSelectorPrefix.PseudoFunctionLang + "(" + _attributeValue + ")";
                         Insert(SimpleSelector.PseudoClass(code));
                         break;
                     }
                 case PseudoSelectorPrefix.PseudoFunctionContains:
                     {
-                        var code = string.Format("{0}({1})", PseudoSelectorPrefix.PseudoFunctionContains, _attributeValue);
+                        var code = PseudoSelectorPrefix.PseudoFunctionContains + "(" + _attributeValue + ")";
                         Insert(SimpleSelector.PseudoClass(code));
                         break;
                     }
@@ -629,23 +635,27 @@ namespace ExCSS
         private BaseSelector GetChildSelector<T>() where T : NthChildSelector, new()
         {
             var selector = new T();
-
-            if (_attributeValue.Equals(PseudoSelectorPrefix.NthChildOdd, StringComparison.OrdinalIgnoreCase))
+            int offset;
+            var parsed = int.TryParse(_attributeValue, out offset);
+            if (string.Equals(_attributeValue, PseudoSelectorPrefix.NthChildOdd, StringComparison.OrdinalIgnoreCase))
             {
                 selector.Step = 2;
                 selector.Offset = 1;
                 selector.FunctionText = PseudoSelectorPrefix.NthChildOdd;
             }
-            else if (_attributeValue.Equals(PseudoSelectorPrefix.NthChildEven, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(_attributeValue, PseudoSelectorPrefix.NthChildEven, StringComparison.OrdinalIgnoreCase))
             {
                 selector.Step = 2;
                 selector.Offset = 0;
                 selector.FunctionText = PseudoSelectorPrefix.NthChildEven;
             }
-            else if (!int.TryParse(_attributeValue, out selector.Offset))
+            else if (!parsed)
             {
+#if SALTARELLE
+                var index = _attributeValue.IndexOf(PseudoSelectorPrefix.NthChildN);
+#else
                 var index = _attributeValue.IndexOf(PseudoSelectorPrefix.NthChildN, StringComparison.OrdinalIgnoreCase);
-
+#endif
                 if (_attributeValue.Length <= 0 || index == -1)
                 {
                     return selector;
@@ -683,7 +693,6 @@ namespace ExCSS
                 }
                 else
                 {
-                    int offset;
                     if (int.TryParse(second, out offset))
                     {
                         selector.Offset = offset;

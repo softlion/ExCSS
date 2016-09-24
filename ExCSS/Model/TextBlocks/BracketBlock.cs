@@ -1,4 +1,7 @@
 ﻿
+using Shaman.Runtime;
+using System.Text;
+
 namespace ExCSS.Model.TextBlocks
 {
     internal class BracketBlock : Block
@@ -91,33 +94,41 @@ namespace ExCSS.Model.TextBlocks
 
         public override string ToString()
         {
-            return ToString(false);
+            var sb = ReseekableStringBuilder.AcquirePooledStringBuilder();
+            ToString(sb, false);
+            return ReseekableStringBuilder.GetValueAndRelease(sb);
         }
 
-        public string ToString(bool friendlyFormat, int indentation = 0)
+        public void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
+            char ch;
             switch (GrammarSegment)
             {
                 case GrammarSegment.CurlyBraceOpen:
-                    return "{";
-
+                    ch = '{';
+                    break;
                 case GrammarSegment.CurlyBracketClose:
-                    return "}";
-
+                    ch = '}';
+                    break;
                 case GrammarSegment.ParenClose:
-                    return ")";
-
+                    ch = ')';
+                    break;
                 case GrammarSegment.ParenOpen:
-                    return "(";
+                    ch = '(';
+                    break;
 
                 case GrammarSegment.SquareBracketClose:
-                    return "]";
+                    ch = ']';
+                    break;
 
                 case GrammarSegment.SquareBraceOpen:
-                    return "[";
+                    ch = '[';
+                    break;
+                default:
+                    return;
             }
 
-            return string.Empty;
+            sb.Append(ch);
         }
     }
 }

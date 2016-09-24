@@ -1,5 +1,8 @@
 
 // ReSharper disable once CheckNamespace
+using Shaman.Runtime;
+using System.Text;
+
 namespace ExCSS
 {
     public abstract class RuleSet
@@ -11,6 +14,13 @@ namespace ExCSS
 
         public RuleType RuleType { get; set; }
 
-        public abstract string ToString(bool friendlyFormat, int indentation = 0);
+        public abstract void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0);
+
+        public override string ToString()
+        {
+            var sb = ReseekableStringBuilder.AcquirePooledStringBuilder();
+            ToString(sb, false);
+            return ReseekableStringBuilder.GetValueAndRelease(sb);
+        }
     }
 }

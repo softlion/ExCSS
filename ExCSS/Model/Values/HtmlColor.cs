@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Globalization;
 using System.Runtime.InteropServices;
 using ExCSS.Model;
 using ExCSS.Model.Extensions;
+using System.Text;
+using Shaman.Runtime;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -157,19 +158,11 @@ namespace ExCSS
 
         public static bool operator ==(HtmlColor a, HtmlColor b)
         {
-            if (object.ReferenceEquals(a, b))
-                return true;
-            if (object.ReferenceEquals(a, null) || object.ReferenceEquals(b, null))
-                return false;
             return a.GetHashCode() == b.GetHashCode();
         }
 
         public static bool operator !=(HtmlColor a, HtmlColor b)
         {
-            if (object.ReferenceEquals(a, b))
-                return false;
-            if (object.ReferenceEquals(a, null) || object.ReferenceEquals(b, null))
-                return true;
             return a.GetHashCode() != b.GetHashCode();
         }
 
@@ -188,36 +181,53 @@ namespace ExCSS
             return unchecked(A + (R << 8) + (G << 16) + (B << 24));
         }
 
-        public override string ToString()
+        
+        public override void ToString(StringBuilder sb)
         {
-            return ToString(false);
-        }
-
-        public string ToString(bool friendlyFormat, int indentation = 0)
-        {
-            return ToCss().Indent(friendlyFormat, indentation);
-        }
-
-        public string ToString(bool forceLong, bool friendlyFormat, int indentation = 0)
-        {
-            return ToCss(forceLong).Indent(friendlyFormat, indentation);
+            ToCss(sb);
         }
 
         /// <summary>
         /// Return the shortest form possible
         /// </summary>
-        string ToCss(bool forceLong = false)
+        void ToCss(StringBuilder sb)
         {
-            if (A == 255 && !forceLong && ((R >> 4) == (R & 0x0F)) && ((G >> 4) == (G & 0x0F)) && ((B >> 4) == (B & 0x0F)))
-                return "#" + R.ToHexChar() + G.ToHexChar() + B.ToHexChar();
+            if (A == 255 && ((R >> 4) == (R & 0x0F)) && ((G >> 4) == (G & 0x0F)) && ((B >> 4) == (B & 0x0F)))
+            {
+                sb.Append('#');
+                sb.Append(R.ToHexChar());
+                sb.Append(G.ToHexChar());
+                sb.Append(B.ToHexChar());
+                return;
+            }
+                
 
             if (A == 255)
             {
-                return "#" + R.ToHex() + G.ToHex() + B.ToHex();
+                sb.Append('#');
+                sb.AppendTwoDigitHex(R);
+                sb.AppendTwoDigitHex(G);
+                sb.AppendTwoDigitHex(B);
+
+                return;
                 //return "rgb(" + R + ", " + G + ", " + B + ")";
             }
 
-            return "rgba(" + R + "," + G + "," + B + "," + Alpha.ToString("0.##", CultureInfo.InvariantCulture) + ")";
+            sb.Append("rgba(");
+            sb.AppendFast(R);
+            sb.Append(", ");
+            sb.AppendFast(G);
+            sb.Append(", ");
+            sb.AppendFast(B);
+            sb.Append(", ");
+            sb.Append(
+#if SALTARELLE
+                Alpha.ToPrecision(3)
+#else
+                Alpha.ToString("0.##")
+#endif
+                );
+            sb.Append(')');
         }
 
         public bool Equals(HtmlColor other)

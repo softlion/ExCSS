@@ -1,4 +1,5 @@
 ﻿using ExCSS.Model.Extensions;
+using System.Text;
 // ReSharper disable once CheckNamespace
 
 
@@ -15,16 +16,23 @@ namespace ExCSS
 
         public string Prefix { get; set; }
 
-        public override string ToString()
+        
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            return ToString(false);
-        }
-
-        public override string ToString(bool friendlyFormat, int indentation = 0)
-        {
-            return string.IsNullOrEmpty(Prefix)
-                 ? string.Format("@namespace '{0}';", Uri).NewLineIndent(friendlyFormat, indentation)
-                 : string.Format("@namespace {0} '{1}';", Prefix, Uri).NewLineIndent(friendlyFormat, indentation);
+            sb.NewLineIndent(friendlyFormat, indentation);
+            if (string.IsNullOrEmpty(Prefix))
+            {
+                sb.Append("@namespace '");
+                sb.Append(Uri);
+                sb.Append("';");
+            }
+            else {
+                sb.Append("@namespace ");
+                sb.Append(Prefix);
+                sb.Append(" '");
+                sb.Append(Uri);
+                sb.Append("';");
+            }
         }
     }
 }

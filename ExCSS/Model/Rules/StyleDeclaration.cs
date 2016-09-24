@@ -1,7 +1,11 @@
-﻿using System;
+﻿using Shaman.Runtime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -48,10 +52,12 @@ namespace ExCSS
             return _properties.Contains(item);
         }
 
+#if !SALTARELLE
         public void CopyTo(Property[] array, int arrayIndex)
         {
             _properties.CopyTo(array, arrayIndex);
         }
+#endif
 
         public bool Remove(Property item)
         {
@@ -75,12 +81,13 @@ namespace ExCSS
 
         public override string ToString()
         {
-            return ToString(false);
+            var sb = ReseekableStringBuilder.AcquirePooledStringBuilder();
+            ToString(sb, false);
+            return ReseekableStringBuilder.GetValueAndRelease(sb);
         }
 
-        public string ToString(bool friendlyFormat, int indentation = 0)
+        public void ToString(StringBuilder builder, bool friendlyFormat, int indentation = 0)
         { 
-            var builder = new StringBuilder();
 
             foreach (var property in _properties)
             {
@@ -89,10 +96,9 @@ namespace ExCSS
                     builder.Append(Environment.NewLine);
                 }
 
-                builder.Append(property.ToString(friendlyFormat, indentation+1)).Append(';');
+                property.ToString(builder, friendlyFormat, indentation + 1);
+                builder.Append(';');
             }
-
-            return builder.ToString();
         }
 
         internal string RemoveProperty(string propertyName)

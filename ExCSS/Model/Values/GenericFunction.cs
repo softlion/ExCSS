@@ -21,9 +21,12 @@ namespace ExCSS
             Arguments = list;
         }
 
-        public override string ToString()
+        public override void ToString(StringBuilder sb)
         {
-            return Name + "(" + Arguments + ")";
+            sb.Append(Name);
+            sb.Append('(');
+            Arguments.ToString(sb);
+            sb.Append(')');
         }
     }
 }

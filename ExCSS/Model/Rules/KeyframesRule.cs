@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ExCSS.Model.Extensions;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -10,13 +11,12 @@ namespace ExCSS
     {
         private readonly List<RuleSet> _ruleSets;
         private string _identifier;
-        private string _ruleName;
 
-        public KeyframesRule(string ruleName = null)
+        public KeyframesRule()
         {
-            _ruleName = ruleName ?? "keyframes";
             _ruleSets = new List<RuleSet>();
             RuleType = RuleType.Keyframes;
+            AtRuleKeyword = "keyframes";
         }
 
         public string Identifier
@@ -31,21 +31,29 @@ namespace ExCSS
             get { return _ruleSets; }
         }
 
-        public override string ToString()
+        
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            return ToString(false);
+            
+
+            sb.NewLineIndent(friendlyFormat, indentation);
+            sb.Append('@');
+            sb.Append(AtRuleKeyword);
+            sb.Append(' ');
+            sb.Append(_identifier);
+            sb.Append('{');
+
+            //if (friendlyFormat) sb.NewLineIndent("", true, indentation + 1);
+            foreach (var r in _ruleSets)
+            {
+                ///if (first) first = false;
+                if (friendlyFormat) sb.NewLineIndent("", friendlyFormat, indentation);
+                r.ToString(sb, friendlyFormat, indentation + 1);
+            }
+
+            sb.NewLineIndent("}", friendlyFormat, indentation);                
         }
 
-        public override string ToString(bool friendlyFormat, int indentation = 0)
-        {
-            var join = friendlyFormat ? "".NewLineIndent(true, indentation) : "";
-
-            var declarationList = _ruleSets.Select(d => d.ToString(friendlyFormat, indentation + 1));
-            var declarations = string.Join(join, declarationList);
-
-            return ("@" + _ruleName + " " + _identifier + "{").NewLineIndent(friendlyFormat, indentation) +
-                declarations.NewLineIndent(friendlyFormat, indentation) +
-                "}".NewLineIndent(friendlyFormat, indentation);
-        }
+        public string AtRuleKeyword { get; set; }
     }
 }

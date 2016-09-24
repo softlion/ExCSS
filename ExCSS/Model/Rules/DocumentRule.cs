@@ -3,19 +3,25 @@ using System.Collections.Generic;
 using System.Text;
 using ExCSS.Model;
 using ExCSS.Model.Extensions;
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
 {
     public sealed class DocumentRule : AggregateRule
     {
-        readonly List<Tuple<DocumentFunction, string>> _conditions;
+        readonly List<DocumentFunctionStringPair> _conditions;
 
         internal DocumentRule()
         { 
             RuleType = RuleType.Document;
-            _conditions = new List<Tuple<DocumentFunction, string>>();
+            _conditions = new List<DocumentFunctionStringPair>();
+            AtRuleKeyword = "document";
         }
+
+        public string AtRuleKeyword { get; internal set; }
 
         public string ConditionText
         {
@@ -62,21 +68,26 @@ namespace ExCSS
             }
         }
 
-        internal List<Tuple<DocumentFunction, string>> Conditions
+        internal List<DocumentFunctionStringPair> Conditions
         {
             get { return _conditions; }
         }
 
-        public override string ToString()
-        {
-            return ToString(false);
-        }
+        
 
-        public override string ToString(bool friendlyFormat, int indentation = 0)
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            return "@document " + ConditionText + " {" + 
-                RuleSets + 
-                "}".NewLineIndent(friendlyFormat, indentation);
+            sb.Append('@');
+            sb.Append(AtRuleKeyword);
+            sb.Append(' ');
+            sb.Append(ConditionText);
+            sb.Append(" {");
+            foreach (var r in RuleSets)
+            {
+                // TODO original code appended RuleSet.ToString()!!?
+                r.ToString(sb, friendlyFormat, indentation);
+            }
+            sb.NewLineIndent("}", friendlyFormat, indentation);
         }
     }
 }

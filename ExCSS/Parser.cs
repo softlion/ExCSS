@@ -6,6 +6,9 @@ using ExCSS.Model.TextBlocks;
 // ReSharper disable once CheckNamespace
 using System;
 
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
 
 namespace ExCSS
 {
@@ -23,6 +26,7 @@ namespace ExCSS
         private Stack<RuleSet> _activeRuleSets;
         private StringBuilder _buffer;
         private ParsingContext _parsingContext;
+        private bool _skipNextProperty;
 
         public StyleSheet Parse(string css)
         {
@@ -35,11 +39,43 @@ namespace ExCSS
             SetParsingContext(ParsingContext.DataBlock);
 
             var tokens = _lexer.Tokens;
-
+            var t = 0;
+            Exception firstError = null;
+            var exceptionCount = 0;
             foreach (var token in tokens)
             {
-                if (ParseTokenBlock(token))
+                t++;
+
+                if (_functionBuffers.Count != 0 && (_property == null || token.GrammarSegment == GrammarSegment.CurlyBracketClose))
                 {
+                    _skipNextProperty = false;
+                    _functionBuffers.Clear();
+                }
+                try
+                {
+                    if (ParseTokenBlock(token))
+                    {
+                        continue;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (firstError == null) firstError = ex;
+                    if (exceptionCount == 10) throw new Exception(firstError.Message, firstError);
+                    exceptionCount++;
+                    this._terms = new TermList();
+                    this._skipNextProperty = false;
+                    this._property = null;
+                    this._isFraction = false;
+                    this._functionBuffers.Clear();
+                    this._activeRuleSets.Clear();
+                    SetParsingContext(ParsingContext.DataBlock);
+                    continue;
+                }
+       
+                if (token.GrammarSegment == GrammarSegment.Delimiter && token.ToString() == "*")
+                {
+                    _skipNextProperty = true;
                     continue;
                 }
 
@@ -73,12 +109,12 @@ namespace ExCSS
         internal static RuleSet ParseRule(string css)
         {
             var parser = new Parser();
-            
+
 
             var styleSheet = parser.Parse(css);
 
             return styleSheet.Rules.Count > 0
-                ? styleSheet.Rules[0] 
+                ? styleSheet.Rules[0]
                 : null;
         }
 
@@ -93,7 +129,7 @@ namespace ExCSS
         internal static void AppendDeclarations(StyleDeclaration list, string css, bool quirksMode = false)
         {
             var parser = new Parser();//(new StyleSheet(), new StylesheetReader(declarations))
-           
+
 
             parser.AddRuleSet(list.ParentRule ?? new StyleRule(list));
 
@@ -145,7 +181,7 @@ namespace ExCSS
                 {
                     _property.Term = _terms;
                 }
-                else
+                else if (_terms.Length == 1)
                 {
                     _property.Term = _terms[0];
                 }
@@ -192,6 +228,12 @@ namespace ExCSS
             _property = property;
             var rule = CurrentRule as ISupportsDeclarations;
 
+            if (_skipNextProperty)
+            {
+                _skipNextProperty = false;
+                return;
+            }
+
             if (rule != null)
             {
                 rule.Declarations.Add(property);
@@ -227,7 +269,6 @@ namespace ExCSS
                     _lexer.IgnoreComments = true;
                     _lexer.IgnoreWhitespace = false;
                     break;
-
                 default:
                     _lexer.IgnoreComments = true;
                     _lexer.IgnoreWhitespace = true;

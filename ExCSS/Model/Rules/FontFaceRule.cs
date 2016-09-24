@@ -1,5 +1,7 @@
 ﻿using ExCSS.Model;
 using ExCSS.Model.Extensions;
+using Shaman.Runtime;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -8,10 +10,11 @@ namespace ExCSS
     {
         private readonly StyleDeclaration _declarations;
 
-        public FontFaceRule() 
+        public FontFaceRule()
         {
             _declarations = new StyleDeclaration();
             RuleType = RuleType.FontFace;
+            AtRuleKeyword = "font-face";
         }
 
         internal FontFaceRule AppendRule(Property rule)
@@ -73,16 +76,18 @@ namespace ExCSS
             set { _declarations.SetProperty("font-feature-settings", value); }
         }
 
-        public override string ToString()
-        {
-            return ToString(false);
-        }
+        public string AtRuleKeyword { get; internal set; }
 
-        public override string ToString(bool friendlyFormat, int indentation = 0)
+        public override void ToString(StringBuilder sb,  bool friendlyFormat, int indentation = 0)
         {
-            return "@font-face{".NewLineIndent(friendlyFormat, indentation) +
-                _declarations.ToString(friendlyFormat, indentation) +
-                "}".NewLineIndent(friendlyFormat, indentation);
+            sb.Append('@');
+            sb.Append(AtRuleKeyword);
+            sb.NewLineIndent("{", friendlyFormat, indentation);
+            _declarations.ToString(sb, friendlyFormat, indentation);
+            sb.NewLineIndent("}", friendlyFormat, indentation);
+
+            
+                
         }
     }
 }

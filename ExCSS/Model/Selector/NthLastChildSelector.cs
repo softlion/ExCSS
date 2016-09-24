@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
 {
-    internal sealed class NthLastChildSelector : NthChildSelector, IToString
+    internal sealed class NthLastChildSelector : NthChildSelector
     {
-        public override string ToString(bool friendlyFormat, int indentation = 0)
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            return FormatSelector(PseudoSelectorPrefix.PseudoFunctionNthlastchild);
+            FormatSelector(sb, PseudoSelectorPrefix.PseudoFunctionNthlastchild);
         }
     }
 }

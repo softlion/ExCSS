@@ -1,6 +1,7 @@
-﻿using System;
-using System.Text;
+﻿using Shaman.Runtime;
+using System;
 using System.Globalization;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -47,46 +48,48 @@ namespace ExCSS
             return quantity;
         }
 
-        public override string ToString()
+        public override void ToString(StringBuilder sb)
         {
             switch (PrimitiveType)
             {
                 case UnitType.String:
-                    return EscapedString(Value.ToString());
+                    sb.Append('\'');
+                    sb.Append(Value);
+                    sb.Append('\'');
+                    return;
 
                 case UnitType.Uri:
-                    return "url(" + Value + ")";
-
+                    sb.Append("url(");
+                    sb.Append(Value);
+                    sb.Append(')');
+                    return;
+                    
                 default:
                     if (Value is Single)
-                        return ((Single)Value).ToString(CultureInfo.InvariantCulture) + ConvertUnitTypeToString(PrimitiveType);
+                    {
+                        var s = (Single)Value;
+#if SALTARELLE
+                        sb.Append(s.ToString());
+#else
+                        if (s < 100000 && s > -100000)
+                        {
+                            var k = (int)s;
+                            if (k == s)
+                            {
+                                sb.AppendFast(k);
+                                sb.Append(ConvertUnitTypeToString(PrimitiveType));
+                                return;
+                            }
+                        }
+                        sb.Append(s.ToString(CultureInfo.InvariantCulture));
 
-                    return Value.ToString();
+#endif
+                        sb.Append(ConvertUnitTypeToString(PrimitiveType));
+                        return;
+                    }
+                    sb.Append(Value);
+                    return;
             }
-        }
-
-        internal static string EscapedString(string value)
-        {
-            StringBuilder encoded = new StringBuilder();
-
-            var hasControl = false;
-            foreach (var ch in value)
-            {
-                if (Char.IsControl(ch))
-                {
-                    encoded.AppendFormat("\\{0:X}", Convert.ToInt32(ch));
-                    hasControl = true;
-                }
-                else
-                    encoded.Append(ch);
-
-            }
-
-            char quoted = hasControl ? '\"' : '\'';
-            encoded.Insert(0, quoted);
-            encoded.Append(quoted);
-
-            return encoded.ToString();
         }
 
         internal static UnitType ConvertStringToUnitType(string unit)
@@ -135,8 +138,6 @@ namespace ExCSS
                     return UnitType.ViewportMin;
                 case "vmax":
                     return UnitType.ViewportMax;
-                case "rem":
-                    return UnitType.RootEms;
             }
 
             return UnitType.Unknown;
@@ -188,8 +189,6 @@ namespace ExCSS
                     return "vmin";
                 case UnitType.ViewportMax:
                     return "vmax";
-                case UnitType.RootEms:
-                    return "rem";
             }
 
             return string.Empty;

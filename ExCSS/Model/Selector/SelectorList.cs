@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -52,6 +53,6 @@ namespace ExCSS
             return ((IEnumerable)Selectors).GetEnumerator();
         }
 
-        public override abstract string ToString(bool friendlyFormat, int indentation = 0);
+        public override abstract void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0);
     }
 }

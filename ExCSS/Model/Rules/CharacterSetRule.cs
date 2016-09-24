@@ -1,4 +1,5 @@
 ﻿using ExCSS.Model.Extensions;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -12,14 +13,12 @@ namespace ExCSS
 
         public string Encoding { get; internal set; }
 
-        public override string ToString()
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            return ToString(false);
-        }
-
-        public override string ToString(bool friendlyFormat, int indentation = 0)
-        {
-            return string.Format("@charset '{0}';", Encoding).NewLineIndent(friendlyFormat, indentation);
+            sb.NewLineIndent(friendlyFormat, indentation);
+            sb.Append("@charset '");
+            sb.Append(Encoding);
+            sb.Append("';");
         }
     }
 }

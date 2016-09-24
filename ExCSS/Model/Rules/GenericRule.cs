@@ -1,24 +1,13 @@
-﻿// ReSharper disable once CheckNamespace
-
-using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
-using ExCSS.Model;
 
+// ReSharper disable once CheckNamespace
 namespace ExCSS
 {
-    public class GenericRule : AggregateRule, ISupportsDeclarations
+    public class GenericRule : AggregateRule
     {
         private string _text;
         private bool _stopped;
-
-
-        public StyleDeclaration Declarations { get; private set; }
-
-        public GenericRule()
-        {
-            Declarations = new StyleDeclaration();
-        }
 
         internal void SetInstruction(string text)
         {
@@ -32,30 +21,20 @@ namespace ExCSS
             _stopped = false;
         }
 
-        public override string ToString()
-        {
-            return ToString(false);
-        }
-
-        public override string ToString(bool friendlyFormat, int indentation = 0)
+        
+        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
             if (_stopped)
             {
-                return _text + ";";
+                sb.Append(_text);
+                sb.Append(';');
+                return;
             }
-            var sb = new StringBuilder();
-            sb.Append(_text).Append("{");
-            sb.Append(Declarations.ToString(friendlyFormat, indentation));
-            foreach (var rule in  RuleSets)
-            {
-                if (friendlyFormat)
-                    sb.AppendLine();
-                sb.Append(rule.ToString(friendlyFormat, indentation));
-            }
-            if (friendlyFormat)
-                sb.AppendLine();
-            sb.Append("}");
-            return sb.ToString();
+
+            sb.Append(_text);
+            sb.Append('{');
+            RuleSetsToString(sb, false, 0);
+            sb.Append('}');
         }
     }
 }

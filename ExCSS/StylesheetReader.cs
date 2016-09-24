@@ -2,6 +2,9 @@
 using System.IO;
 using System.Text;
 using ExCSS.Model;
+#if SALTARELLE
+using StringBuilder = System.Text.Saltarelle.StringBuilder;
+#endif
 
 namespace ExCSS
 {
@@ -9,13 +12,19 @@ namespace ExCSS
     {
         private int _insertion;
         private readonly Stack<int> _collengths;
-        private TextReader _reader;
+#if SALTARELLE
+        private readonly string _buffer;
+#else
         private readonly StringBuilder _buffer;
+        private TextReader _reader;
+#endif
         private bool _lineWithReturn;
 
         StylesheetReader()
         {
+#if !SALTARELLE
             _buffer = new StringBuilder();
+#endif
             _collengths = new Stack<int>();
             Column = 1;
             Line = 1;
@@ -23,33 +32,38 @@ namespace ExCSS
 
         internal StylesheetReader(string styleText) : this()
         {
+#if SALTARELLE
+            _buffer = styleText;
+#else
             _reader = new StringReader(styleText);
+#endif
             ReadCurrent();
         }
-
+#if !SALTARELLE
         internal StylesheetReader(Stream styleStream) : this()
         {
             _reader = new StreamReader(styleStream, true);
             ReadCurrent();
         }
+#endif
 
         internal bool IsBeginning
         {
             get { return _insertion < 2; }
         }
 
-        internal int Line { get; private set; }
+        internal int Line;
 
-        internal int Column { get; private set; }
+        internal int Column;
 
-        internal bool IsEnded { get; private set; }
+        internal bool IsEnded;
 
         internal bool IsEnding
         {
             get { return Current == Specification.EndOfFile; }
         }
 
-        internal char Current { get; private set; }
+        internal char Current;
 
         internal char Next
         {
@@ -94,11 +108,14 @@ namespace ExCSS
         internal void Back()
         {
             IsEnded = false;
+            if (_insertion >= 2) BackUnsafe();
+        }
 
-            if (!IsBeginning)
-            {
-                BackUnsafe();
-            }
+        internal void Back2()
+        {
+            IsEnded = false;
+            if (_insertion >= 2) BackUnsafe();
+            if (_insertion >= 2) BackUnsafe();
         }
 
         internal void Back(int positions)
@@ -120,6 +137,9 @@ namespace ExCSS
                 return;
             }
 
+#if SALTARELLE
+            Current = Specification.EndOfFile;
+#else
             var nextPosition = _reader.Read();
             Current = nextPosition == -1 ? Specification.EndOfFile : (char)nextPosition;
 
@@ -141,6 +161,7 @@ namespace ExCSS
 
             _buffer.Append(Current);
             _insertion++;
+#endif
         }
 
         private void AdvanceUnsafe()
