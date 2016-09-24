@@ -1,6 +1,5 @@
 ﻿
 // ReSharper disable once CheckNamespace
-using Shaman.Runtime;
 using System.Text;
 using System;
 
@@ -10,9 +9,9 @@ namespace ExCSS
     {
         public sealed override string ToString()
         {
-            var sb = ReseekableStringBuilder.AcquirePooledStringBuilder();
+            var sb = new StringBuilder();
             ToString(sb, false);
-            return ReseekableStringBuilder.GetValueAndRelease(sb);
+            return sb.ToString();
         }
 
         public abstract void ToString(StringBuilder sb, bool friendlyFormat = false, int indentation = 0);

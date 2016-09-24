@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 using ExCSS.Model;
 using ExCSS.Model.Extensions;
 using System.Text;
-using Shaman.Runtime;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -214,11 +213,11 @@ namespace ExCSS
             }
 
             sb.Append("rgba(");
-            sb.AppendFast(R);
+            sb.Append(R);
             sb.Append(", ");
-            sb.AppendFast(G);
+            sb.Append(G);
             sb.Append(", ");
-            sb.AppendFast(B);
+            sb.Append(B);
             sb.Append(", ");
             sb.Append(
 #if SALTARELLE

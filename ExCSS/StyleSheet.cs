@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ExCSS.Model.Extensions;
-using Shaman.Runtime;
 
 #if SALTARELLE
 using StringBuilder = System.Text.Saltarelle.StringBuilder;
@@ -133,9 +132,11 @@ namespace ExCSS
 
         public override string ToString()
         {
-            var sb = ReseekableStringBuilder.AcquirePooledStringBuilder();
+            //var sb = ReseekableStringBuilder.AcquirePooledStringBuilder();
+            var sb = new StringBuilder();
             ToString(sb, false);
-            return ReseekableStringBuilder.GetValueAndRelease(sb);
+            //return ReseekableStringBuilder.GetValueAndRelease(sb);
+            return sb.ToString();
         }
 
         public void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)

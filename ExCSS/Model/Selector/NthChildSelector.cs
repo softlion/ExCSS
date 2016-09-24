@@ -1,6 +1,5 @@
 ﻿
 // ReSharper disable once CheckNamespace
-using Shaman.Runtime;
 using System.Text;
 
 namespace ExCSS
@@ -19,12 +18,12 @@ namespace ExCSS
 
             if (string.IsNullOrEmpty(FunctionText))
             {
-                sb.AppendFast(Step);
+                sb.Append(Step);
                 sb.Append('n');
 
                 if (Offset >= 0) sb.Append('+');
                 
-                sb.AppendFast(Offset);
+                sb.Append(Offset);
             }
             else
             {

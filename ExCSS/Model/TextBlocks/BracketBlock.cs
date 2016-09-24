@@ -1,5 +1,4 @@
 ﻿
-using Shaman.Runtime;
 using System.Text;
 
 namespace ExCSS.Model.TextBlocks
@@ -94,9 +93,9 @@ namespace ExCSS.Model.TextBlocks
 
         public override string ToString()
         {
-            var sb = ReseekableStringBuilder.AcquirePooledStringBuilder();
+            var sb = new StringBuilder();
             ToString(sb, false);
-            return ReseekableStringBuilder.GetValueAndRelease(sb);
+            return sb.ToString();
         }
 
         public void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)

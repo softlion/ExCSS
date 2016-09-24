@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using ExCSS.Model.Extensions;
 using System.Text;
-using Shaman.Runtime;
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -77,9 +76,9 @@ namespace ExCSS
 
         public override string ToString()
         {
-            var sb = ReseekableStringBuilder.AcquirePooledStringBuilder();
+            var sb = new StringBuilder();
             ToString(sb, false);
-            return ReseekableStringBuilder.GetValueAndRelease(sb);
+            return sb.ToString();
         }
 
         public void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)

@@ -1,6 +1,5 @@
 ﻿using ExCSS.Model;
 using ExCSS.Model.Extensions;
-using Shaman.Runtime;
 using System.Text;
 
 // ReSharper disable once CheckNamespace

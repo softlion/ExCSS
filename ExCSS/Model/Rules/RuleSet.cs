@@ -1,6 +1,3 @@
-
-// ReSharper disable once CheckNamespace
-using Shaman.Runtime;
 using System.Text;
 
 namespace ExCSS
@@ -18,9 +15,9 @@ namespace ExCSS
 
         public override string ToString()
         {
-            var sb = ReseekableStringBuilder.AcquirePooledStringBuilder();
+            var sb = new StringBuilder();
             ToString(sb, false);
-            return ReseekableStringBuilder.GetValueAndRelease(sb);
+            return sb.ToString();
         }
     }
 }

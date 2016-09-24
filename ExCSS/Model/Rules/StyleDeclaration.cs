@@ -1,5 +1,4 @@
-﻿using Shaman.Runtime;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -81,9 +80,9 @@ namespace ExCSS
 
         public override string ToString()
         {
-            var sb = ReseekableStringBuilder.AcquirePooledStringBuilder();
+            var sb = new StringBuilder();
             ToString(sb, false);
-            return ReseekableStringBuilder.GetValueAndRelease(sb);
+            return sb.ToString();
         }
 
         public void ToString(StringBuilder builder, bool friendlyFormat, int indentation = 0)

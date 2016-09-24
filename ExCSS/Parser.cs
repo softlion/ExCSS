@@ -150,7 +150,8 @@ namespace ExCSS
             {
                 if (_terms.Length > 0)
                     value = new PrimitiveTerm(UnitType.Unknown, _terms[_terms.Length - 1] + "/" + value);
-                _terms.SetLastTerm(value);
+                //_terms.SetLastTerm(value);
+                _terms.AddTerm(value);
                 _isFraction = false;
             }
             else if (_functionBuffers.Count > 0)

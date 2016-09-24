@@ -1,7 +1,6 @@
 ﻿using System;
 using ExCSS.Model;
 using System.Text;
-using Shaman.Runtime;
 // ReSharper disable once CheckNamespace
 
 namespace ExCSS
@@ -17,20 +16,18 @@ namespace ExCSS
         }
         public SimpleSelector(string part1, string part2)
         {
-            var p = ReseekableStringBuilder.AcquirePooledStringBuilder();
+            var p = new StringBuilder();
             p.Append(part1);
             p.Append(part2);
-            _code = p.ToStringCached();
-            ReseekableStringBuilder.Release(p);
+            _code = p.ToString();
         }
 
         public SimpleSelector(char part1, string part2)
         {
-            var p = ReseekableStringBuilder.AcquirePooledStringBuilder();
+            var p = new StringBuilder();
             p.Append(part1);
             p.Append(part2);
-            _code = p.ToStringCached();
-            ReseekableStringBuilder.Release(p);
+            _code = p.ToString();
         }
 
         internal static SimpleSelector PseudoElement(string pseudoElement)

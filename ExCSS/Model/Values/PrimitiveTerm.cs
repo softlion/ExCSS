@@ -1,5 +1,4 @@
-﻿using Shaman.Runtime;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Text;
 
@@ -76,7 +75,7 @@ namespace ExCSS
                             var k = (int)s;
                             if (k == s)
                             {
-                                sb.AppendFast(k);
+                                sb.Append(k);
                                 sb.Append(ConvertUnitTypeToString(PrimitiveType));
                                 return;
                             }

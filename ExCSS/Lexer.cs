@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Text;
 using ExCSS.Model;
 using ExCSS.Model.TextBlocks;
-using Shaman.Runtime;
 #if SALTARELLE
 using StringBuilder = System.Text.Saltarelle.StringBuilder;
 #endif
@@ -1075,7 +1074,7 @@ namespace ExCSS
 
         private string FlushBuffer()
         {
-            var value = _buffer.ToStringCached();
+            var value = _buffer.ToString();
             _buffer.Clear();
             return value;
         }
