@@ -6,9 +6,9 @@ namespace ExCSS
 {
     internal sealed class NthLastChildSelector : NthChildSelector
     {
-        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            FormatSelector(sb, PseudoSelectorPrefix.PseudoFunctionNthlastchild);
+            return FormatSelector(sb, PseudoSelectorPrefix.PseudoFunctionNthlastchild);
         }
     }
 }

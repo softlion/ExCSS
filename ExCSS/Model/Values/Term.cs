@@ -7,13 +7,12 @@ namespace ExCSS
     public abstract class Term
     {
         public static readonly InheritTerm Inherit = new InheritTerm();
-        public abstract void ToString(StringBuilder sb);
+
+        public abstract StringBuilder ToString(StringBuilder sb);
 
         public override string ToString()
         {
-            var sb = new StringBuilder();
-            ToString(sb);
-            return sb.ToString();
+            return ToString(new StringBuilder()).ToString();
         }
     }
 }

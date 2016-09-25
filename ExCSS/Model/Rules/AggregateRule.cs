@@ -13,9 +13,9 @@ namespace ExCSS
             RuleSets = new List<RuleSet>();
         }
 
-        public List<RuleSet> RuleSets { get; private set; }
+        public List<RuleSet> RuleSets { get; }
 
-        protected void RuleSetsToString(StringBuilder sb, bool friendlyFormat, int indentation)
+        protected StringBuilder RuleSetsToString(StringBuilder sb, bool friendlyFormat=false, int indentation=0)
         {
             //if (friendlyFormat) sb.NewLineIndent("", true, indentation + 1);
             
@@ -23,6 +23,7 @@ namespace ExCSS
             {
                 r.ToString(sb, friendlyFormat, indentation + 1);
             }
+            return sb;
         }
     }
 }

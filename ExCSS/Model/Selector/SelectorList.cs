@@ -14,10 +14,7 @@ namespace ExCSS
             Selectors = new List<BaseSelector>();
         }
 
-        public int Length 
-        {
-            get { return Selectors.Count; } 
-        }
+        public int Length => Selectors.Count;
 
         public BaseSelector this[int index]
         {
@@ -52,7 +49,5 @@ namespace ExCSS
         {
             return ((IEnumerable)Selectors).GetEnumerator();
         }
-
-        public override abstract void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0);
     }
 }

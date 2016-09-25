@@ -29,14 +29,10 @@ namespace ExCSS
         }
 
         
-        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat=false, int indentation = 0)
         {
-            sb.NewLineIndent(friendlyFormat, indentation);
-            sb.Append("@media ");
-            sb.Append(_media.MediaType);
-            sb.Append("{");
-            RuleSetsToString(sb, friendlyFormat, indentation);
-            sb.NewLineIndent("}", friendlyFormat, indentation);
+            sb.NewLineIndent(friendlyFormat, indentation).Append("@media ").Append(_media.MediaType).Append("{");
+            return RuleSetsToString(sb, friendlyFormat, indentation).NewLineIndent("}", friendlyFormat, indentation);
         }
     }
 }

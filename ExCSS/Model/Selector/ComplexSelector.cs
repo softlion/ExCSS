@@ -11,12 +11,7 @@ namespace ExCSS
 {
     public class ComplexSelector : BaseSelector, IEnumerable<CombinatorSelector>
     {
-        private readonly List<CombinatorSelector> _selectors;
-
-        public ComplexSelector()
-        {
-            _selectors = new List<CombinatorSelector>();
-        }
+        private readonly List<CombinatorSelector> _selectors = new List<CombinatorSelector>();
 
         public ComplexSelector AppendSelector(BaseSelector selector, Combinator combinator)
         {
@@ -34,34 +29,27 @@ namespace ExCSS
             _selectors.Add(new CombinatorSelector(selector, Combinator.Child));
         }
 
-        public int Length
-        {
-            get { return _selectors.Count; }
-        }
+        public int Length => _selectors.Count;
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable)_selectors).GetEnumerator();
+            return _selectors.GetEnumerator();
         }
 
-        public override void ToString(StringBuilder builder, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat = false, int indentation = 0)
         {
-
-            if (_selectors.Count <= 0)
-            {
-                return;
-            }
+            if (_selectors.Count == 0)
+                return sb;
 
             var n = _selectors.Count - 1;
 
             for (var i = 0; i < n; i++)
             {
-                _selectors[i].Selector.ToString(builder);
-                builder.Append(_selectors[i].Character);
+                _selectors[i].Selector.ToString(sb);
+                sb.Append(_selectors[i].Character);
             }
 
-            _selectors[n].Selector.ToString(builder);
-
+            return _selectors[n].Selector.ToString(sb);
         }
     }
 }

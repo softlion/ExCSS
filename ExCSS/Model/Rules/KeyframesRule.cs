@@ -32,26 +32,19 @@ namespace ExCSS
         }
 
         
-        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat=false, int indentation = 0)
         {
-            
-
-            sb.NewLineIndent(friendlyFormat, indentation);
-            sb.Append('@');
-            sb.Append(AtRuleKeyword);
-            sb.Append(' ');
-            sb.Append(_identifier);
-            sb.Append('{');
+            sb.NewLineIndent(friendlyFormat, indentation).Append('@').Append(AtRuleKeyword).Append(' ').Append(_identifier).Append('{');
 
             //if (friendlyFormat) sb.NewLineIndent("", true, indentation + 1);
             foreach (var r in _ruleSets)
             {
-                ///if (first) first = false;
+                //if (first) first = false;
                 if (friendlyFormat) sb.NewLineIndent("", friendlyFormat, indentation);
                 r.ToString(sb, friendlyFormat, indentation + 1);
             }
 
-            sb.NewLineIndent("}", friendlyFormat, indentation);                
+            return sb.NewLineIndent("}", friendlyFormat, indentation);                
         }
 
         public string AtRuleKeyword { get; set; }

@@ -28,20 +28,10 @@ namespace ExCSS
         public bool IsSupported{ get; set; }
 
 
-        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat = false, int indentation = 0)
         {
-            sb.NewLineIndent(friendlyFormat, indentation);
-            sb.Append('@');
-            sb.Append(AtRuleKeyword);
-            sb.Append(' ');
-            sb.Append(_condition);
-            sb.Append('{');
-
-            RuleSetsToString(sb, friendlyFormat, indentation);
-
-            sb.NewLineIndent("}", friendlyFormat, indentation);
+            sb.NewLineIndent(friendlyFormat, indentation).Append('@').Append(AtRuleKeyword).Append(' ').Append(_condition).Append('{');
+            return RuleSetsToString(sb, friendlyFormat, indentation).NewLineIndent("}", friendlyFormat, indentation);
         }
-
-        
     }
 }

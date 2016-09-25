@@ -16,18 +16,12 @@ namespace ExCSS
         }
         public SimpleSelector(string part1, string part2)
         {
-            var p = new StringBuilder();
-            p.Append(part1);
-            p.Append(part2);
-            _code = p.ToString();
+            _code = part1 + part2;
         }
 
         public SimpleSelector(char part1, string part2)
         {
-            var p = new StringBuilder();
-            p.Append(part1);
-            p.Append(part2);
-            _code = p.ToString();
+            _code = part1 + part2;
         }
 
         internal static SimpleSelector PseudoElement(string pseudoElement)
@@ -113,29 +107,23 @@ namespace ExCSS
             for (var i = 0; i < value.Length; i++)
             {
                 if (!value[i].IsSpaceCharacter())
-                {
                     continue;
-                }
                 containsSpace = true;
                 break;
             }
 
             if (!containsSpace)
-            {
                 return value;
-            }
 
             if (value.IndexOf(Specification.SingleQuote) != -1)
-            {
                 return "\"" + value + "\"";
-            }
 
             return "'" + value + "'";
         }
 
-        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat=false, int indentation = 0)
         {
-            sb.Append(_code);
+            return sb.Append(_code);
         }
     }
 }

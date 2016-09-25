@@ -8,8 +8,8 @@ namespace ExCSS
 {
     public class StyleRule : RuleSet, ISupportsSelector, ISupportsDeclarations
     {
-        private BaseSelector _selector;
         private readonly StyleDeclaration _declarations;
+        private string cachedValue;
 
         public StyleRule() : this( new StyleDeclaration())
         {}
@@ -20,37 +20,20 @@ namespace ExCSS
             _declarations = declarations;
         }
 
-        public BaseSelector Selector
-        {
-            get { return _selector; }
-            set
-            {
-                _selector = value;
-            }
-        }
+        public BaseSelector Selector { get { return selector; } set { selector = value; cachedValue=null; } }
+        private BaseSelector selector;
 
         public string Value
         {
-            get { return _selector.ToString(); }
-            set
-            {
-                _selector = Parser.ParseSelector(value);
-            }
+            get { return cachedValue ?? (cachedValue=Selector.ToString()); }
+            set { selector = Parser.ParseSelector(value); cachedValue=value; }
         }
 
-        public StyleDeclaration Declarations
-        {
-            get { return _declarations; }
-        }
+        public StyleDeclaration Declarations => _declarations;
 
-        
-        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat = false, int indentation = 0)
         {
-            sb.NewLineIndent(friendlyFormat, indentation);
-            _selector.ToString(sb);
-            sb.Append('{');
-            _declarations.ToString(sb, friendlyFormat, indentation);
-            sb.NewLineIndent("}", friendlyFormat, indentation);
+            return _declarations.ToString(Selector.ToString(sb.NewLineIndent(friendlyFormat, indentation)).Append('{'), friendlyFormat, indentation).NewLineIndent("}", friendlyFormat, indentation);
         }
     }
 }

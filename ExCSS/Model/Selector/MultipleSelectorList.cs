@@ -13,32 +13,22 @@ namespace ExCSS
             var multiple = new MultipleSelectorList();
 
             foreach (var selector in selectors)
-            {
                 multiple.Selectors.Add(selector);
-            }
 
             return multiple;
         }
 
         internal bool IsInvalid { get; set; }
 
-        public override void ToString(StringBuilder builder, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat = false, int indentation = 0)
         {
-            
-
             if (Selectors.Count <= 0)
-            {
-                return;
-            }
+                return sb;
 
-            Selectors[0].ToString(builder);
-
+            Selectors[0].ToString(sb);
             for (var i = 1; i < Selectors.Count; i++)
-            {
-                builder.Append(',');
-                Selectors[i].ToString(builder);
-            }
-
+                Selectors[i].ToString(sb.Append(','));
+            return sb;
         }
     }
 }

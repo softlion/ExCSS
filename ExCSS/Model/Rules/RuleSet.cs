@@ -11,7 +11,7 @@ namespace ExCSS
 
         public RuleType RuleType { get; set; }
 
-        public abstract void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0);
+        public abstract StringBuilder ToString(StringBuilder sb, bool friendlyFormat = false, int indentation = 0);
 
         public override string ToString()
         {

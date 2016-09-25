@@ -1,6 +1,6 @@
 ﻿namespace ExCSS.Model
 {
-    interface ISupportsSelector
+    internal interface ISupportsSelector
     {
         BaseSelector Selector { get; set; }
     }

@@ -75,19 +75,16 @@ namespace ExCSS
 
         
 
-        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat=false, int indentation = 0)
         {
-            sb.Append('@');
-            sb.Append(AtRuleKeyword);
-            sb.Append(' ');
-            sb.Append(ConditionText);
-            sb.Append(" {");
+            sb.Append('@').Append(AtRuleKeyword).Append(' ').Append(ConditionText).Append(" {");
             foreach (var r in RuleSets)
             {
                 // TODO original code appended RuleSet.ToString()!!?
                 r.ToString(sb, friendlyFormat, indentation);
             }
             sb.NewLineIndent("}", friendlyFormat, indentation);
+            return sb;
         }
     }
 }

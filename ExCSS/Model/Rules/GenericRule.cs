@@ -22,19 +22,12 @@ namespace ExCSS
         }
 
         
-        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat=false, int indentation = 0)
         {
             if (_stopped)
-            {
-                sb.Append(_text);
-                sb.Append(';');
-                return;
-            }
+                return sb.Append(_text).Append(';');
 
-            sb.Append(_text);
-            sb.Append('{');
-            RuleSetsToString(sb, false, 0);
-            sb.Append('}');
+            return RuleSetsToString(sb.Append(_text).Append('{'), friendlyFormat, indentation).Append('}');
         }
     }
 }

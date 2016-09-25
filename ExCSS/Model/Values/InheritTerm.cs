@@ -9,9 +9,9 @@ namespace ExCSS
         {
         }
 
-        public override void ToString(StringBuilder sb)
+        public override StringBuilder ToString(StringBuilder sb)
         {
-            sb.Append( "inherit");
+            return sb.Append( "inherit");
         }
     }
 }

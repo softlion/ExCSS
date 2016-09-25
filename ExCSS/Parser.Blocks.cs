@@ -11,6 +11,8 @@ namespace ExCSS
 {
     public partial class Parser
     {
+        private readonly StringBuilder _buffer = new StringBuilder();
+
         private bool ParseTokenBlock(Block token)
         {
             switch (_parsingContext)
@@ -179,7 +181,7 @@ namespace ExCSS
                         }
                     case RuleTypes.Supports:
                         {
-                            _buffer = new StringBuilder();
+                            _buffer.Clear();
                             AddRuleSet(new SupportsRule() { AtRuleKeyword = orig });
                             SetParsingContext(ParsingContext.InCondition);
                             break;
@@ -204,7 +206,7 @@ namespace ExCSS
                         }
                     default:
                         {
-                            _buffer = new StringBuilder();
+                            _buffer.Clear();
                             AddRuleSet(new GenericRule());
                             SetParsingContext(ParsingContext.InUnknown);
                             ParseUnknown(token);
@@ -556,7 +558,7 @@ namespace ExCSS
                     return true;
 
                 case Specification.Hash:
-                    _buffer = new StringBuilder();
+                    _buffer.Clear();
                     SetParsingContext(ParsingContext.InHexValue);
                     return true;
 
@@ -691,7 +693,7 @@ namespace ExCSS
                 return FinalizeRule();
             }
 
-            _buffer = new StringBuilder();
+            _buffer.Clear();
 
             return ParseKeyframeText(token);
         }
@@ -838,7 +840,7 @@ namespace ExCSS
                 return true;
             }
 
-            _buffer = new StringBuilder();
+            _buffer.Clear();
             SetParsingContext(ParsingContext.InMediaValue);
             return ParseMediaValue(token);
         }

@@ -31,13 +31,10 @@ namespace ExCSS
         
         public string AtRuleKeyword { get; set; }
 
-        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat = false, int indentation = 0)
         {
-            sb.Append('@');
-            sb.Append(AtRuleKeyword);
-            sb.Append('{');
-            _declarations.ToString(sb, friendlyFormat, indentation);
-            sb.NewLineIndent("}", friendlyFormat, indentation);
+            sb.Append('@').Append(AtRuleKeyword).Append('{');
+            return _declarations.ToString(sb, friendlyFormat, indentation).NewLineIndent("}", friendlyFormat, indentation);
         }
     }
 }

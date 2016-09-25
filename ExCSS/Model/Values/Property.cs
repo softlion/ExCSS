@@ -6,47 +6,28 @@ namespace ExCSS
 {
     public class Property
     {
-        private Term _term;
-        private bool _important;
-        
         public Property(string name)
         {
             Name = name;
         }
 
-        public string Name { get; private set; }
+        public string Name { get; }
 
-        public Term Term
-        {
-            get { return _term; }
-            set { _term = value; }
-        }
+        public Term Term { get; set; }
 
-        public bool Important
-        {
-            get { return _important; }
-            set { _important = value; }
-        }
+        public bool Important { get; set; }
 
         public override string ToString()
         {
-            var sb = new StringBuilder();
-            ToString(sb, false);
-            return sb.ToString();
+            return ToString(new StringBuilder(), false).ToString();
         }
 
-        public void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public StringBuilder ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            sb.Indent(friendlyFormat, indentation);
-            sb.Append(Name);
-            sb.Append(':');
-            _term?.ToString(sb);
-            if (_important)
-            {
+            Term?.ToString(sb.Indent(friendlyFormat, indentation).Append(Name).Append(':'));
+            if (Important)
                 sb.Append(" !important");
-            }
-
-
+            return sb;
         }
     }
 }

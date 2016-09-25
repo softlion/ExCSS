@@ -9,14 +9,10 @@ namespace ExCSS
     {
         public sealed override string ToString()
         {
-            var sb = new StringBuilder();
-            ToString(sb, false);
-            return sb.ToString();
+            return ToString(new StringBuilder()).ToString();
         }
 
-        public abstract void ToString(StringBuilder sb, bool friendlyFormat = false, int indentation = 0);
-
-        
+        public abstract StringBuilder ToString(StringBuilder sb, bool friendlyFormat = false, int indentation = 0);
     }
 }
 

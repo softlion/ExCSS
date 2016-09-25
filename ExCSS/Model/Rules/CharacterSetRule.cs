@@ -13,12 +13,9 @@ namespace ExCSS
 
         public string Encoding { get; internal set; }
 
-        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat=false, int indentation = 0)
         {
-            sb.NewLineIndent(friendlyFormat, indentation);
-            sb.Append("@charset '");
-            sb.Append(Encoding);
-            sb.Append("';");
+            return sb.NewLineIndent(friendlyFormat, indentation).Append("@charset '").Append(Encoding).Append("';");
         }
     }
 }

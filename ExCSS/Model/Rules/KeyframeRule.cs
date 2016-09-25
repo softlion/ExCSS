@@ -21,17 +21,15 @@ namespace ExCSS
             set { _value = value; }
         }
 
-        public StyleDeclaration Declarations { get; private set; }
+        public StyleDeclaration Declarations { get; }
 
         
 
-        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat=false, int indentation = 0)
         {
-            sb.Indent(string.Empty, friendlyFormat, indentation);
-            sb.Append(_value);
-            sb.Append('{');
+            sb.Indent(string.Empty, friendlyFormat, indentation).Append(_value).Append('{');
             Declarations.ToString(sb, friendlyFormat, indentation);
-            sb.NewLineIndent("}", friendlyFormat, indentation);
+            return sb.NewLineIndent("}", friendlyFormat, indentation);
         }
     }
 }

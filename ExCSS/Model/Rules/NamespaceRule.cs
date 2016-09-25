@@ -17,22 +17,14 @@ namespace ExCSS
         public string Prefix { get; set; }
 
         
-        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat = false, int indentation = 0)
         {
             sb.NewLineIndent(friendlyFormat, indentation);
             if (string.IsNullOrEmpty(Prefix))
-            {
-                sb.Append("@namespace '");
-                sb.Append(Uri);
-                sb.Append("';");
-            }
-            else {
-                sb.Append("@namespace ");
-                sb.Append(Prefix);
-                sb.Append(" '");
-                sb.Append(Uri);
-                sb.Append("';");
-            }
+                sb.Append("@namespace '").Append(Uri).Append("';");
+            else
+                sb.Append("@namespace ").Append(Prefix).Append(" '").Append(Uri).Append("';");
+            return sb;
         }
     }
 }

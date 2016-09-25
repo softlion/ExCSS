@@ -47,21 +47,15 @@ namespace ExCSS
             return quantity;
         }
 
-        public override void ToString(StringBuilder sb)
+        public override StringBuilder ToString(StringBuilder sb)
         {
             switch (PrimitiveType)
             {
                 case UnitType.String:
-                    sb.Append('\'');
-                    sb.Append(Value);
-                    sb.Append('\'');
-                    return;
+                    return sb.Append('\'').Append(Value).Append('\'');
 
                 case UnitType.Uri:
-                    sb.Append("url(");
-                    sb.Append(Value);
-                    sb.Append(')');
-                    return;
+                    return sb.Append("url(").Append(Value).Append(')');
                     
                 default:
                     if (Value is Single)
@@ -74,20 +68,13 @@ namespace ExCSS
                         {
                             var k = (int)s;
                             if (k == s)
-                            {
-                                sb.Append(k);
-                                sb.Append(ConvertUnitTypeToString(PrimitiveType));
-                                return;
-                            }
+                                return sb.Append(k).Append(ConvertUnitTypeToString(PrimitiveType));
                         }
                         sb.Append(s.ToString(CultureInfo.InvariantCulture));
-
 #endif
-                        sb.Append(ConvertUnitTypeToString(PrimitiveType));
-                        return;
+                        return sb.Append(ConvertUnitTypeToString(PrimitiveType));
                     }
-                    sb.Append(Value);
-                    return;
+                    return sb.Append(Value);
             }
         }
 

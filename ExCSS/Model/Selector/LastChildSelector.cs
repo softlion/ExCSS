@@ -5,20 +5,17 @@ namespace ExCSS
 {
     internal sealed class LastChildSelector : BaseSelector
     {
-        LastChildSelector()
-        { }
-
         static LastChildSelector _instance;
 
-        public static LastChildSelector Instance
+        public static LastChildSelector Instance => _instance ?? (_instance = new LastChildSelector());
+
+        private LastChildSelector()
         {
-            get { return _instance ?? (_instance = new LastChildSelector()); }
         }
 
-        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat=false, int indentation = 0)
         {
-            sb.Append(':');
-            sb.Append(PseudoSelectorPrefix.PseudoLastchild);
+            return sb.Append(':').Append(PseudoSelectorPrefix.PseudoLastchild);
         }
     }
 }

@@ -10,18 +10,16 @@ namespace ExCSS
         public int Offset;
         internal string FunctionText { get; set; }
 
-        internal void FormatSelector(StringBuilder sb, string functionName)
+        internal StringBuilder FormatSelector(StringBuilder sb, string functionName)
         {
-            sb.Append(':');
-            sb.Append(functionName);
-            sb.Append('(');
+            sb.Append(':').Append(functionName).Append('(');
 
             if (string.IsNullOrEmpty(FunctionText))
             {
-                sb.Append(Step);
-                sb.Append('n');
+                sb.Append(Step).Append('n');
 
-                if (Offset >= 0) sb.Append('+');
+                if (Offset >= 0)
+                    sb.Append('+');
                 
                 sb.Append(Offset);
             }
@@ -29,11 +27,7 @@ namespace ExCSS
             {
                 sb.Append(FunctionText);
             }
-            sb.Append(')');
-
-
+            return sb.Append(')');
         }
-
-        public abstract override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0);
     }
 }

@@ -16,36 +16,41 @@ namespace ExCSS
 
     public sealed partial class Parser
     {
-        private SelectorFactory _selectorFactory;
-        private Stack<FunctionBuffer> _functionBuffers;
+        private StyleSheet _styleSheet;
         private Lexer _lexer;
+
+        private readonly SelectorFactory _selectorFactory = new SelectorFactory();
+        private readonly Stack<FunctionBuffer> _functionBuffers = new Stack<FunctionBuffer>();
+        private readonly Stack<RuleSet> _activeRuleSets = new Stack<RuleSet>();
+        private readonly TermList _terms = new TermList();
+
         private bool _isFraction;
         private Property _property;
-        private TermList _terms = new TermList();
-        private StyleSheet _styleSheet;
-        private Stack<RuleSet> _activeRuleSets;
-        private StringBuilder _buffer;
+
         private ParsingContext _parsingContext;
         private bool _skipNextProperty;
 
-        public StyleSheet Parse(string css)
+        public StyleSheet Parse(string css, StyleSheet existingStyleSheet=null)
         {
-            _selectorFactory = new SelectorFactory();
-            _functionBuffers = new Stack<FunctionBuffer>();
-            _styleSheet = new StyleSheet();
-            _activeRuleSets = new Stack<RuleSet>();
-            _lexer = new Lexer(new StylesheetReader(css)) { ErrorHandler = HandleLexerError };
+            _selectorFactory.ResetFactory();
+            _functionBuffers.Clear();
+            _styleSheet = existingStyleSheet ?? new StyleSheet();
+            _activeRuleSets.Clear();
+            _terms.Clear();
+            _buffer.Clear();
+            _isFraction = false;
+            _skipNextProperty = false;
+            _property = null;
+            _parsingContext = ParsingContext.DataBlock;
 
+            _lexer = new Lexer(new StylesheetReader(css)) { ErrorHandler = HandleLexerError };
             SetParsingContext(ParsingContext.DataBlock);
 
             var tokens = _lexer.Tokens;
-            var t = 0;
             Exception firstError = null;
             var exceptionCount = 0;
             foreach (var token in tokens)
             {
-                t++;
-
                 if (_functionBuffers.Count != 0 && (_property == null || token.GrammarSegment == GrammarSegment.CurlyBracketClose))
                 {
                     _skipNextProperty = false;
@@ -63,7 +68,7 @@ namespace ExCSS
                     if (firstError == null) firstError = ex;
                     if (exceptionCount == 10) throw new Exception(firstError.Message, firstError);
                     exceptionCount++;
-                    this._terms = new TermList();
+                    this._terms.Clear();
                     this._skipNextProperty = false;
                     this._property = null;
                     this._isFraction = false;
@@ -106,36 +111,29 @@ namespace ExCSS
             return result;
         }
 
-        internal static RuleSet ParseRule(string css)
-        {
-            var parser = new Parser();
+        //internal static RuleSet ParseRule(string css)
+        //{
+        //    var parser = new Parser();
+        //    var styleSheet = parser.Parse(css);
+        //    return styleSheet.Rules.Count > 0 ? styleSheet.Rules[0] : null;
+        //}
 
+        //Does nothing by transitivity
+        //internal static StyleDeclaration ParseDeclarations(string declarations, bool quirksMode = false)
+        //{
+        //    var decl = new StyleDeclaration();
+        //    AppendDeclarations(decl, declarations, quirksMode);
+        //    return decl;
+        //}
 
-            var styleSheet = parser.Parse(css);
-
-            return styleSheet.Rules.Count > 0
-                ? styleSheet.Rules[0]
-                : null;
-        }
-
-        internal static StyleDeclaration ParseDeclarations(string declarations, bool quirksMode = false)
-        {
-            var decl = new StyleDeclaration();
-            AppendDeclarations(decl, declarations, quirksMode);
-
-            return decl;
-        }
-
-        internal static void AppendDeclarations(StyleDeclaration list, string css, bool quirksMode = false)
-        {
-            var parser = new Parser();//(new StyleSheet(), new StylesheetReader(declarations))
-
-
-            parser.AddRuleSet(list.ParentRule ?? new StyleRule(list));
-
-            parser._parsingContext = ParsingContext.InDeclaration;
-            parser.Parse(css);
-        }
+        //Does nothing
+        //internal static void AppendDeclarations(StyleDeclaration list, string css, bool quirksMode = false)
+        //{
+        //    var parser = new Parser();//(new StyleSheet(), new StylesheetReader(declarations))
+        //    parser.AddRuleSet(list.ParentRule ?? new StyleRule(list));
+        //    parser._parsingContext = ParsingContext.InDeclaration;
+        //    parser.Parse(css);
+        //}
 
         internal void HandleLexerError(ParserError error, string message)
         {
@@ -188,7 +186,7 @@ namespace ExCSS
                 }
             }
 
-            _terms = new TermList();
+            _terms.Clear();
             _property = null;
         }
 
@@ -210,11 +208,7 @@ namespace ExCSS
             if (_activeRuleSets.Count > 0)
             {
                 var container = _activeRuleSets.Peek() as ISupportsRuleSets;
-
-                if (container != null)
-                {
-                    container.RuleSets.Add(rule);
-                }
+                container?.RuleSets.Add(rule);
             }
             else
             {
@@ -235,10 +229,7 @@ namespace ExCSS
                 return;
             }
 
-            if (rule != null)
-            {
-                rule.Declarations.Add(property);
-            }
+            rule?.Declarations.Add(property);
         }
 
         private T CastRuleSet<T>() where T : RuleSet
@@ -279,14 +270,6 @@ namespace ExCSS
             _parsingContext = newState;
         }
 
-        internal RuleSet CurrentRule
-        {
-            get
-            {
-                return _activeRuleSets.Count > 0
-                    ? _activeRuleSets.Peek()
-                    : null;
-            }
-        }
+        internal RuleSet CurrentRule => _activeRuleSets.Count > 0 ? _activeRuleSets.Peek() : null;
     }
 }

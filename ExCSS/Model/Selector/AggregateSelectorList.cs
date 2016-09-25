@@ -21,17 +21,18 @@ namespace ExCSS
             Delimiter = delimiter;
         }
 
-        public override void ToString(StringBuilder builder, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat = false, int indentation = 0)
         {
             var first = true;
             foreach (var selector in Selectors)
             {
-                if (first) first = false;
-                else builder.Append(Delimiter);
-                selector.ToString(builder, friendlyFormat, indentation + 1);                    
-                
+                if (first)
+                    first = false;
+                else
+                    sb.Append(Delimiter);
+                selector.ToString(sb, friendlyFormat, indentation + 1);                    
             }
-           
+            return sb;
         }
     }
 }

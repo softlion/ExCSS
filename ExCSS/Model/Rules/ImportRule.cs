@@ -29,21 +29,14 @@ namespace ExCSS
 
         
 
-        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat=false, int indentation = 0)
         {
-            sb.NewLineIndent(friendlyFormat, indentation);
-            sb.Append("@import url(");
-            sb.Append(_href);
+            sb.NewLineIndent(friendlyFormat, indentation).Append("@import url(").Append(_href);
             if (_media.Count > 0)
-            {
-                sb.Append(") ");
-                sb.Append(_media);
-                sb.Append(';');
-            }
+                sb.Append(") ").Append(_media).Append(';');
             else
-            {
                 sb.Append(");");
-            }
+            return sb;
         }
     }
 }

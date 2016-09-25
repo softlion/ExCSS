@@ -38,20 +38,11 @@ namespace ExCSS
 
      
 
-        public override void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public override StringBuilder ToString(StringBuilder sb, bool friendlyFormat=false, int indentation = 0)
         {
-            sb.NewLineIndent(friendlyFormat, indentation);
-            sb.Append("@page ");
-            
-            if (_selector != null)
-            {
-                sb.Append(':');
-                _selector.ToString(sb);
-            }
-            sb.Append('{');
-
-            _declarations.ToString(sb, friendlyFormat, indentation);
-            sb.NewLineIndent("}", friendlyFormat, indentation);
+            sb.NewLineIndent(friendlyFormat, indentation).Append("@page ");
+            _selector?.ToString(sb.Append(':'));
+            return _declarations.ToString(sb.Append('{'), friendlyFormat, indentation).NewLineIndent("}", friendlyFormat, indentation);
         }
     }
 }

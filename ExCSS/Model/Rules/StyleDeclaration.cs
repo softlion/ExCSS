@@ -11,28 +11,27 @@ namespace ExCSS
 {
     public class StyleDeclaration : IList<Property>
     {
-        private readonly List<Property> _properties;
-        private readonly Func<string> _getter;
-        private readonly Action<string> _setter;
+        private readonly List<Property> _properties = new List<Property>();
+        //private readonly Func<string> _getter;
+        //private readonly Action<string> _setter;
         private bool _blocking;
 
         public StyleDeclaration()
         {
-            var text = string.Empty;
-            _getter = () => text;
-            _setter = value => text = value;
-            _properties = new List<Property>();
+            //var text = string.Empty;
+            //_getter = () => text;
+            //_setter = value => text = value;
         }
 
-        public string Value
-        {
-            get { return _getter(); }
-            set
-            {
-                Update(value);
-                _setter(value);
-            }
-        }
+        //public string Value
+        //{
+        //    get { return _getter(); }
+        //    set
+        //    {
+        //        Update(value);
+        //        _setter(value);
+        //    }
+        //}
 
         public RuleSet ParentRule { get; set; }
 
@@ -85,53 +84,52 @@ namespace ExCSS
             return sb.ToString();
         }
 
-        public void ToString(StringBuilder builder, bool friendlyFormat, int indentation = 0)
+        public StringBuilder ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         { 
 
             foreach (var property in _properties)
             {
                 if (friendlyFormat)
-                {
-                    builder.Append(Environment.NewLine);
-                }
+                    sb.Append(Environment.NewLine);
 
-                property.ToString(builder, friendlyFormat, indentation + 1);
-                builder.Append(';');
-            }
-        }
-
-        internal string RemoveProperty(string propertyName)
-        {
-            for (var i = 0; i < _properties.Count; i++)
-            {
-                if (!_properties[i].Name.Equals(propertyName))
-                {
-                    continue;
-                }
-
-                var value = _properties[i].Term;
-
-                _properties.RemoveAt(i);
-                Propagate();
-
-                return value.ToString();
+                property.ToString(sb, friendlyFormat, indentation + 1).Append(';');
             }
 
-            return null;
+            return sb;
         }
 
-        internal string GetPropertyValue(string propertyName)
-        {
-            for (var i = 0; i < _properties.Count; i++)
-            {
-                if (_properties[i].Name.Equals(propertyName))
-                {
-                    return _properties[i].Term.ToString();
-                }
-            }
+        //internal string RemoveProperty(string propertyName)
+        //{
+        //    for (var i = 0; i < _properties.Count; i++)
+        //    {
+        //        if (!_properties[i].Name.Equals(propertyName))
+        //        {
+        //            continue;
+        //        }
 
-            return null;
-        }
+        //        var value = _properties[i].Term;
+
+        //        _properties.RemoveAt(i);
+        //        //Propagate();
+
+        //        return value.ToString();
+        //    }
+
+        //    return null;
+        //}
+
+        //internal string GetPropertyValue(string propertyName)
+        //{
+        //    for (var i = 0; i < _properties.Count; i++)
+        //    {
+        //        if (_properties[i].Name.Equals(propertyName))
+        //        {
+        //            return _properties[i].Term.ToString();
+        //        }
+        //    }
+
+        //    return null;
+        //}
 
         public IEnumerator<Property> GetEnumerator()
         {
@@ -144,46 +142,44 @@ namespace ExCSS
             set { _properties[index] = value; }
         }
 
-        public List<Property> Properties
-        {
-            get { return _properties; }
-        }
+        public List<Property> Properties => _properties;
 
-        public int Count { get { return _properties.Count; } }
+        public int Count => _properties.Count;
 
-        public bool IsReadOnly { get { return false; } }
+        public bool IsReadOnly => false;
 
-        internal StyleDeclaration SetProperty(string propertyName, string propertyValue)
-        {
-            //_properties.Add(Parser.ParseDeclaration(propertyName + ":" + propertyValue));
-            //TODO
-            Propagate();
-            return this;
-        }
+        //internal StyleDeclaration SetProperty(string propertyName, string propertyValue)
+        //{
+        //    _properties.Add(Parser.ParseDeclaration(propertyName + ":" + propertyValue));
+        //    //TODO
+        //    //Propagate();
+        //    return this;
+        //}
 
-        internal void Update(string value)
-        {
-            if (_blocking)
-            {
-                return;
-            }
+        //Totally inefficient. +creates a dependency loop. Removed.
+        //internal void Update(string value)
+        //{
+        //    if (_blocking)
+        //    {
+        //        return;
+        //    }
 
-            var rules = Parser.ParseDeclarations(value ?? string.Empty).Properties;
+        //    var rules = Parser.ParseDeclarations(value ?? string.Empty).Properties;
 
-            _properties.Clear();
-            _properties.AddRange(rules);
-        }
+        //    _properties.Clear();
+        //    _properties.AddRange(rules);
+        //}
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable)_properties).GetEnumerator();
         }
 
-        private void Propagate()
-        {
-            _blocking = true;
-            _setter(ToString());
-            _blocking = false;
-        }
+        //private void Propagate()
+        //{
+        //    _blocking = true;
+        //    _setter(ToString());
+        //    _blocking = false;
+        //}
     }
 }

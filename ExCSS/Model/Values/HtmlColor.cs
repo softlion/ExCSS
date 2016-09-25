@@ -181,58 +181,21 @@ namespace ExCSS
         }
 
         
-        public override void ToString(StringBuilder sb)
+        public override StringBuilder ToString(StringBuilder sb)
         {
-            ToCss(sb);
-        }
-
-        /// <summary>
-        /// Return the shortest form possible
-        /// </summary>
-        void ToCss(StringBuilder sb)
-        {
+            // Return the shortest form possible
             if (A == 255 && ((R >> 4) == (R & 0x0F)) && ((G >> 4) == (G & 0x0F)) && ((B >> 4) == (B & 0x0F)))
-            {
-                sb.Append('#');
-                sb.Append(R.ToHexChar());
-                sb.Append(G.ToHexChar());
-                sb.Append(B.ToHexChar());
-                return;
-            }
-                
+                return sb.Append('#').Append(R.ToHexChar()).Append(G.ToHexChar()).Append(B.ToHexChar());
 
             if (A == 255)
-            {
-                sb.Append('#');
-                sb.AppendTwoDigitHex(R);
-                sb.AppendTwoDigitHex(G);
-                sb.AppendTwoDigitHex(B);
+                return sb.Append('#').AppendTwoDigitHex(R).AppendTwoDigitHex(G).AppendTwoDigitHex(B);
 
-                return;
-                //return "rgb(" + R + ", " + G + ", " + B + ")";
-            }
-
-            sb.Append("rgba(");
-            sb.Append(R);
-            sb.Append(", ");
-            sb.Append(G);
-            sb.Append(", ");
-            sb.Append(B);
-            sb.Append(", ");
-            sb.Append(
-#if SALTARELLE
-                Alpha.ToPrecision(3)
-#else
-                Alpha.ToString("0.##")
-#endif
-                );
-            sb.Append(')');
+            return sb.AppendFormat("rgba(").Append(R).Append(", ").Append(G).Append(", ").Append(B).Append(", ").AppendFormat("{0:0.##}", Alpha).Append(')');
         }
 
         public bool Equals(HtmlColor other)
         {
-            HtmlColor o = other as HtmlColor;
-            if (o == null)
+            if (other == null)
                 return false;
             return GetHashCode() == other.GetHashCode();
         }

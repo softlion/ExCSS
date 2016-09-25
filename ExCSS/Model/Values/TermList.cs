@@ -15,8 +15,10 @@ namespace ExCSS
         private readonly List<GrammarSegment> _separator = new List<GrammarSegment>();
         private readonly List<Term> _items = new List<Term>();
 
-        public TermList()
+        internal void Clear()
         {
+            _separator.Clear();
+            _items.Clear();
         }
 
         internal void AddTerm(Term term)
@@ -56,10 +58,8 @@ namespace ExCSS
             return this[index];
         }
 
-        public override void ToString(StringBuilder builder)
+        public override StringBuilder ToString(StringBuilder builder)
         {
-            
-
             for (var i = 0; i < _items.Count; i++)
             {
                 _items[i].ToString(builder);
@@ -82,6 +82,7 @@ namespace ExCSS
                 }
             }
 
+            return builder;
         }
     }
 }
