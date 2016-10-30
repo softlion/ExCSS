@@ -1,3 +1,9 @@
+#Softlion's updates from original (2016/09)
+
+- Removed all external references
+- Removed all methods which would be slow or make parsing slow if used
+- Speed up parsing and decreased memory usage a lot. Note that the css parsing is still a slow operation.
+
 #ExCSS StyleSheet Parser for .NET - It's \#BADA55!#
 
 ExCSS (Pronounced Excess) is a CSS 2.1 and CSS 3 parser for .NET.
