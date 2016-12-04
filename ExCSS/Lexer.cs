@@ -710,7 +710,7 @@ namespace ExCSS
                 {
                     _buffer.Append(current);
                 }
-                else if (current.IsNameStart())
+                else if (current.IsNameStart() && current != 'e' && current != 'E')
                 {
                     var number = FlushBuffer();
                     _buffer.Append(current);
