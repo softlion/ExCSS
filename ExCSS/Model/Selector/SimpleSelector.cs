@@ -91,7 +91,7 @@ namespace ExCSS
 
         internal static SimpleSelector AttributeDashSeparated(string match, string value)
         {
-            var code = "[" + match + "!=\"" + GetValueAsString(value) + "\"]";
+            var code = "[" + match + "|=\"" + GetValueAsString(value) + "\"]";
             return new SimpleSelector(code);
         }
 

@@ -34,7 +34,10 @@ namespace ExCSS
 
             if (_aggregateSelectorList == null || _aggregateSelectorList.Length == 0)
             {
-                return _currentSelector ?? SimpleSelector.All;
+                if (_currentSelector != null)
+                    return _currentSelector;
+                //avoid parsing * when selector not found
+                return new SimpleSelector(".excss-unparsable-selector"); //SimpleSelector.All
             }
 
             if (_currentSelector == null && _aggregateSelectorList.Length == 1)
@@ -356,6 +359,8 @@ namespace ExCSS
                     Insert(SimpleSelector.PseudoElement(data));
                     break;
             }
+
+            _selectorOperation = SelectorOperation.Data;
         }
 
         private void PraseClass(Block token)

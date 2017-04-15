@@ -95,6 +95,29 @@ namespace ExCSS
             return _styleSheet;
         }
 
+        public IList<StyleRule> ParseInline(string inlineCss)
+        {
+            _styleSheet = new StyleSheet();
+            _lexer = new Lexer(new StylesheetReader(inlineCss)) { ErrorHandler = HandleLexerError };
+
+            AddRuleSet(new StyleRule());
+            SetParsingContext(ParsingContext.InDeclaration);
+
+            var tokens = _lexer.Tokens;
+
+            foreach (var token in tokens)
+            {
+                if (ParseTokenBlock(token) && _parsingContext != ParsingContext.DataBlock)
+                    continue;
+                throw new InvalidOperationException($"Provided css string '{inlineCss}' is not a correct inline css.");
+            }
+
+            if (_property != null)
+                ParseTokenBlock(SpecialCharacter.Semicolon);
+
+            return _styleSheet.StyleRules;
+        }
+
         internal static BaseSelector ParseSelector(string selector)
         {
             var tokenizer = new Lexer(new StylesheetReader(selector));
