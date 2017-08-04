@@ -2,9 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-#if SALTARELLE
-using StringBuilder = System.Text.Saltarelle.StringBuilder;
-#endif
 
 // ReSharper disable once CheckNamespace
 namespace ExCSS
@@ -14,14 +11,14 @@ namespace ExCSS
         private readonly List<Property> _properties = new List<Property>();
         //private readonly Func<string> _getter;
         //private readonly Action<string> _setter;
-        private bool _blocking;
+        //private bool _blocking;
 
-        public StyleDeclaration()
-        {
+        //public StyleDeclaration()
+        //{
             //var text = string.Empty;
             //_getter = () => text;
             //_setter = value => text = value;
-        }
+        //}
 
         //public string Value
         //{
