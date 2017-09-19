@@ -24,7 +24,8 @@ namespace ExCSS
 
         public StringBuilder ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
-            Term?.ToString(sb.Indent(friendlyFormat, indentation).Append(Name).Append(':'));
+            sb.Indent(friendlyFormat, indentation).Append(Name).Append(':');
+            Term?.ToString(sb);
             if (Important)
                 sb.Append(" !important");
             return sb;

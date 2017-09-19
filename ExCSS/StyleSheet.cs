@@ -123,12 +123,11 @@ namespace ExCSS
             return sb.ToString();
         }
 
-        public void ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
+        public StringBuilder ToString(StringBuilder sb, bool friendlyFormat, int indentation = 0)
         {
             foreach (var rule in Rules)
-            {
                 rule.ToString(sb, friendlyFormat, indentation);
-            }
+            return sb;
         }
 
     }

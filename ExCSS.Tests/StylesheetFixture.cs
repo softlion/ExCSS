@@ -1,12 +1,12 @@
 ﻿using System.Linq;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ExCSS.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class StylesheetFixture
     {
-        [Test]
+        [TestMethod]
         public void Empty_stylesheet_does_not_throw_on_ToString()
         {
             var parser = new Parser();

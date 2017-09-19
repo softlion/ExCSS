@@ -52,28 +52,29 @@ namespace ExCSS
             switch (PrimitiveType)
             {
                 case UnitType.String:
+                    //BUG: Value can contains unprintable chars that have to be escaped
                     return sb.Append('\'').Append(Value).Append('\'');
 
                 case UnitType.Uri:
                     return sb.Append("url(").Append(Value).Append(')');
                     
                 default:
-                    if (Value is Single)
-                    {
-                        var s = (Single)Value;
-#if SALTARELLE
-                        sb.Append(s.ToString());
-#else
-                        if (s < 100000 && s > -100000)
-                        {
-                            var k = (int)s;
-                            if (k == s)
-                                return sb.Append(k).Append(ConvertUnitTypeToString(PrimitiveType));
-                        }
-                        sb.Append(s.ToString(CultureInfo.InvariantCulture));
-#endif
-                        return sb.Append(ConvertUnitTypeToString(PrimitiveType));
-                    }
+//                    if (Value is Single)
+//                    {
+//                        var s = (Single)Value;
+//#if SALTARELLE
+//                        sb.Append(s.ToString());
+//#else
+//                        if (s < 100000 && s > -100000)
+//                        {
+//                            var k = (int)s;
+//                            if (k == s)
+//                                return sb.Append(k).Append(ConvertUnitTypeToString(PrimitiveType));
+//                        }
+//                        sb.Append(s.ToString(CultureInfo.InvariantCulture));
+//#endif
+//                        return sb.Append(ConvertUnitTypeToString(PrimitiveType));
+//                    }
                     return sb.Append(Value);
             }
         }

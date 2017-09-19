@@ -1,12 +1,13 @@
 ﻿using System;
-using NUnit.Framework;
+using System.Text;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ExCSS.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class PropertyFixture
     {
-        [Test]
+        [TestMethod]
         public void Parser_Finds_Multiple_Properties()
         {
             var parser = new Parser();
@@ -16,16 +17,16 @@ namespace ExCSS.Tests
             Assert.AreEqual(2, css.StyleRules[0].Declarations.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void Force_Long_Html_Color()
         {
             var color = HtmlColor.FromHex("FF00FF");
-            var colorString = color.ToString(true, false);
+            var colorString = color.ToString(new StringBuilder()).ToString();
 
-            Assert.AreEqual(colorString.Length, 7);
+            Assert.AreEqual(colorString.Length, 4);
         }
 
-        [Test]
+        [TestMethod]
         public void Converts_Rgb_To_Hex()
         {
             var parser = new Parser();
@@ -34,7 +35,7 @@ namespace ExCSS.Tests
         }
 
 
-        [Test]
+        [TestMethod]
         public void Converts_Rgba_With_Opacity_To_Hex()
         {
             var parser = new Parser();
@@ -42,7 +43,7 @@ namespace ExCSS.Tests
             Assert.AreEqual(".class{color:rgba(10,255,34,0.4);}", css.ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Converts_Rgba_To_Hex()
         {
             var parser = new Parser();
@@ -50,7 +51,7 @@ namespace ExCSS.Tests
             Assert.AreEqual(".class{color:#F0F;}", css.ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Converts_Hsl_To_Hex()
         {
             var parser = new Parser();
@@ -58,7 +59,7 @@ namespace ExCSS.Tests
             Assert.AreEqual(".class{color:#F00;}", css.ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Converts_Hsl_To_Hex_Percentage()
         {
             var parser = new Parser();
@@ -66,7 +67,7 @@ namespace ExCSS.Tests
             Assert.AreEqual(".class{color:#F00;}", css.ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void PrimitiveString_DoubleQuoteAndEscapeControlCharacters()
         {
             var parser = new Parser();
@@ -74,7 +75,7 @@ namespace ExCSS.Tests
             Assert.AreEqual(@".body:after{content:""\A✼\A"";}", css.ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void PrimitiveString_SingleQuoteStringsWithoutControlCharacters()
         {
             var parser = new Parser();
@@ -82,7 +83,7 @@ namespace ExCSS.Tests
             Assert.AreEqual(@".body:after{content:'boo';}", css.ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void PrimitiveString_EmptyValue()
         {
             var parser = new Parser();

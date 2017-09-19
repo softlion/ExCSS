@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using NUnit.Framework;
+using System.Text;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ExCSS.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class AtRuleFixture
     {
         #region Charset
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Character_Sets_Symbols()
         {
             var parser = new Parser();
@@ -19,8 +20,8 @@ namespace ExCSS.Tests
 
             Assert.AreEqual("@charset 'utf-8';", charset[0].ToString());
         }
-        
-        [Test]
+
+        [TestMethod]
         public void Parser_Reads_Character_Sets_Strings()
         {
             var parser = new Parser();
@@ -37,7 +38,7 @@ namespace ExCSS.Tests
         #endregion
 
         #region Imports
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Imports_Double_Quoted()
         {
             var parser = new Parser();
@@ -48,7 +49,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("@import url(style.css);", imports[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Imports_URL_Double_Quoted()
         {
             var parser = new Parser();
@@ -60,7 +61,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("@import url(style.css);", imports[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Imports_With_Single_Media()
         {
             var parser = new Parser();
@@ -71,7 +72,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("@import url(style.css) print;", imports[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Imports_With_Multiple_Media()
         {
             var parser = new Parser();
@@ -82,7 +83,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("@import url(style.css) projection, tv;", imports[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Imports_With_Constraints()
         {
             var parser = new Parser();
@@ -93,7 +94,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("@import url(style.css) handheld and (max-width: 400px);", imports[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Imports_With_Plain_And_Quoted_Meida()
         {
             var parser = new Parser();
@@ -104,7 +105,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("@import url(style.css) screen 'Plain style';", imports[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Imports_With_Quoted_Media_And_Delimiters()
         {
             var parser = new Parser();
@@ -115,7 +116,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("@import url(style.css) 'Four-columns and dark';", imports[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Imports_With_Quoted_URL_And_Media()
         {
             var parser = new Parser();
@@ -128,7 +129,7 @@ namespace ExCSS.Tests
         #endregion
 
         #region Fontface
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Fontface()
         {
             var parser = new Parser();
@@ -148,7 +149,7 @@ namespace ExCSS.Tests
         #endregion
 
         #region Keyframes
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Keyframes()
         {
             var parser = new Parser();
@@ -159,7 +160,7 @@ namespace ExCSS.Tests
             Assert.AreEqual(@"@keyframes test-keyframes{from{top:0px;}to{top:200px;}}", keyframes[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void KeyFrames_ToString_Test()
         {
             var parser = new Parser();
@@ -167,7 +168,7 @@ namespace ExCSS.Tests
                 parser.Parse("@keyframes ixp-bounce { 0%, 100% { transform: translateY(0);}}").ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void KeyFrames_ToString_With_Vendor_Prefix_Test()
         {
             var parser = new Parser();
@@ -175,7 +176,7 @@ namespace ExCSS.Tests
                 parser.Parse("@-moz-keyframes ixp-bounce { 0%, 100% { transform: translateY(0);}}").ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void KeyFrames_Multi_Test()
         {
             var parser = new Parser();
@@ -193,27 +194,27 @@ namespace ExCSS.Tests
 
             var result = parser.Parse(css).ToString();
             Console.WriteLine(result);
-            Assert.That(result.Contains("@keyframes ixp-tada"));
+            Assert.IsTrue(result.Contains("@keyframes ixp-tada"));
             Assert.AreEqual(@"@-moz-keyframes ixp-tada{0%{transform:scale(111);}10%,20%{transform:scale(222) rotate(-3deg);}100%{transform:scale(333) rotate(0);}}@keyframes ixp-tada{0%{transform:scale(666);}100%{transform:scale(1) rotate(777);}}", result);
         }
 
-        [Test]
+        [TestMethod]
         public void KeyFrames_Browser_Prefix_Works_Test()
         {
             var parser = new Parser();
             StyleSheet result = null;
-            Assert.DoesNotThrow(() =>
-            {
+            //Assert.DoesNotThrow(() =>
+            //{
                 result = parser.Parse(@"@-webkit-keyframes ixp-bounce { 100% { -webkit-transform: translateY(0); } }");
-            });
-            Assert.That(result.ToString(), Is.StringContaining("transform"));
+            //});
+            Assert.IsTrue(result.ToString().Contains("transform"));
 
         }
 
         #endregion
 
         #region Media
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Media_Queries()
         {
             var parser = new Parser();
@@ -224,7 +225,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("@media print {body{font-size:12pt;}h1{font-size:24pt;}}", media[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Media_Queries_With_Trailing_Semicolon()
         {
             var parser = new Parser();
@@ -236,7 +237,7 @@ namespace ExCSS.Tests
             Assert.AreEqual(2, css.Rules.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Media_Queries_With_Comma_Delimiters()
         {
             var parser = new Parser();
@@ -251,7 +252,7 @@ namespace ExCSS.Tests
         #endregion
 
         #region Page
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Page_Directives()
         {
             var parser = new Parser();
@@ -262,7 +263,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("@page {size:auto;margin:10%;}", pages[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Page_Directives_With_Pseudo()
         {
             var parser = new Parser();
@@ -276,7 +277,7 @@ namespace ExCSS.Tests
         #endregion
 
         #region Supports
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Supports_Directives()
         {
             var parser = new Parser();
@@ -289,7 +290,7 @@ namespace ExCSS.Tests
         #endregion
 
         #region Namespace
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Namespace_Directives_With_Prefix()
         {
             var parser = new Parser();
@@ -300,7 +301,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("@namespace toto 'http://toto.example.org';", namespaces[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Namespace_Directives()
         {
             var parser = new Parser();
@@ -313,26 +314,26 @@ namespace ExCSS.Tests
         #endregion
 
         #region Unknown directive
-        [Test]
+        [TestMethod]
         public void Parser_Does_Not_Stop_On_Unknown_Directive()
         {
             var input = "@custom url(img.jpg);.other{color:red;}";
             var parser = new Parser();
             var css = parser.Parse(input);
 
-            Assert.AreEqual(input, css.ToString(false));
+            Assert.AreEqual(input, css.ToString(new StringBuilder(), false).ToString());
             Assert.AreEqual(2, css.Rules.Count);
             Assert.AreEqual(1, css.StyleRules.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Does_Not_Stop_On_Unknown_Directive_With_Body()
         {
             var input = "@-ms-viewport{width:device-width;}.other{color:red;}";
             var parser = new Parser();
             var css = parser.Parse(input);
 
-            Assert.AreEqual(input, css.ToString(false));
+            Assert.AreEqual(input, css.ToString(new StringBuilder(), false).ToString());
             Assert.AreEqual(2, css.Rules.Count);
             Assert.AreEqual(1, css.StyleRules.Count);
         }

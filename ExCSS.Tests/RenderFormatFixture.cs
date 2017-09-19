@@ -1,13 +1,14 @@
 ﻿
-using ExCSS.Tests.Properties;
-using NUnit.Framework;
+using System.Text;
+using ExCSS.Tests.Stylesheets;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ExCSS.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class RenderFormatFixture
     {
-        [Test]
+        [TestMethod]
         public void Stylesheet_Renders_Inline()
         {
             var parser = new Parser();
@@ -17,13 +18,13 @@ namespace ExCSS.Tests
             Assert.AreEqual(Resources.Css3Min, css.ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Stylesheet_Renders_Friendly_Format()
         {
             var parser = new Parser();
             var css = parser.Parse(Resources.Css3);
 
-            Assert.AreEqual(Resources.Css3Friendly, css.ToString(true));
+            Assert.AreEqual(Resources.Css3Friendly, css.ToString(new StringBuilder(), true).ToString());
         }
     }
 }

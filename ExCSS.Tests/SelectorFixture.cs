@@ -1,21 +1,22 @@
 ﻿using System.Linq;
-using NUnit.Framework;
+using System.Text;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ExCSS.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class SelectorFixture
     {
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Hex_Color()
         {
             var parser = new Parser();
             var css = parser.Parse("html{color:#000000;}");
 
-            Assert.AreEqual("html{color:#000;}", css.ToString(false));
+            Assert.AreEqual("html{color:#000;}", css.ToString(new StringBuilder(), false).ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Important_Flag()
         {
             var parser = new Parser();
@@ -26,7 +27,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("table.fullWidth{width:100% !important;}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Global_Selectors()
         {
             var parser = new Parser();
@@ -37,7 +38,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("*{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Mixed_Selectors()
         {
             var parser = new Parser();
@@ -48,7 +49,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("button,.button,input[type=\"button\"]{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Class_Selectors()
         {
             var parser = new Parser();
@@ -63,7 +64,7 @@ namespace ExCSS.Tests
             Assert.AreEqual(".two", selector[1].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Element_Selectors()
         {
             var parser = new Parser();
@@ -74,7 +75,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Empty_Attribute_Element_Selectors()
         {
             var parser = new Parser();
@@ -85,7 +86,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E[foo]{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Quoted_Attribute_Element_Selectors()
         {
             var parser = new Parser();
@@ -96,7 +97,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E[foo=\"bar\"]{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Space_Separated_Attribute()
         {
             var parser = new Parser();
@@ -107,7 +108,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E[foo~=\"bar\"]{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Starts_With_Attribute()
         {
             var parser = new Parser();
@@ -118,7 +119,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E[foo^=\"bar\"]{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Ends_With_Attribute()
         {
             var parser = new Parser();
@@ -129,7 +130,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E[foo$=\"bar\"]{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Contains_Attribute()
         {
             var parser = new Parser();
@@ -140,7 +141,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E[foo*=\"bar\"]{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Dash_Attribute()
         {
             var parser = new Parser();
@@ -151,7 +152,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E[foo|=\"bar\"]{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Multiple_Attribute()
         {
             var parser = new Parser();
@@ -162,7 +163,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E[foo=\"bar\"][rel=\"important\"]{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Pseudo_Selectors()
         {
             var parser = new Parser();
@@ -173,7 +174,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E:pseudo{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Pseudo_Functions()
         {
             var parser = new Parser();
@@ -184,7 +185,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E:nth-child(1n+0){}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Pseudo_Functions_With_Negative_Rules()
         {
             var parser = new Parser();
@@ -195,7 +196,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E:nth-last-of-type(-1n+2){}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Pseudo_Element()
         {
             var parser = new Parser();
@@ -206,7 +207,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E::first-line{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Class_Attributed_Elements()
         {
             var parser = new Parser();
@@ -217,7 +218,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E.warning{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Id_Elements()
         {
             var parser = new Parser();
@@ -228,7 +229,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E#id{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Descendant_Elements()
         {
             var parser = new Parser();
@@ -239,7 +240,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E F{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Child_Elements()
         {
             var parser = new Parser();
@@ -250,7 +251,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E>F{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Adjacent_Sibling_Elements()
         {
             var parser = new Parser();
@@ -261,7 +262,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E+F{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_General_Sibling_Elements()
         {
             var parser = new Parser();
@@ -272,7 +273,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E+F{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Multiple_Pseudo_Classes()
         {
             var parser = new Parser();
@@ -283,7 +284,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E:focus:hover{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Element_Class_Pseudo_Classes()
         {
             var parser = new Parser();
@@ -294,7 +295,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E.class:hover{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Global_Combinator()
         {
             var parser = new Parser();
@@ -305,7 +306,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E * p{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Global_Attribute()
         {
             var parser = new Parser();
@@ -316,7 +317,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E p *[href]{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Descendand_And_Child_Combinators()
         {
             var parser = new Parser();
@@ -327,7 +328,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E F>G H{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Classed_Element_Combinators()
         {
             var parser = new Parser();
@@ -338,7 +339,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E.warning+h2{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Descendand_And_Sibling_Combinators()
         {
             var parser = new Parser();
@@ -349,7 +350,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E F+G{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Attributed_Descendants()
         {
             var parser = new Parser();
@@ -360,7 +361,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E+*[REL=\"up\"]{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Chained_Classes()
         {
             var parser = new Parser();
@@ -371,7 +372,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("E.first.second{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Namespace_Selectors()
         {
             var parser = new Parser();
@@ -382,7 +383,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("ns|F{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Namespace_Global()
         {
             var parser = new Parser();
@@ -393,7 +394,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("ns|*{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Element_With_No_Namespace_Global()
         {
             var parser = new Parser();
@@ -404,7 +405,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("|E{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Element_With_Any_Namespace_Global()
         {
             var parser = new Parser();
@@ -415,10 +416,10 @@ namespace ExCSS.Tests
             Assert.AreEqual("*|E{}", rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Any_Comments_Without_Errors()
         {
-            var validComments = new[] {"/*/", "/**/", "/***/", "/****/", "/* anything */", "/* // */", "/*// */"};
+            var validComments = new[] { "/**/", "/***/", "/****/", "/* anything */", "/* // */", "/*// */"};
             var parser = new Parser();
 
             foreach (var comment in validComments)
@@ -428,7 +429,7 @@ namespace ExCSS.Tests
             }
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Multiline_Comments()
         {
             string comments = "#sidebar { }\r\n" +
@@ -452,29 +453,29 @@ namespace ExCSS.Tests
             Assert.AreEqual("#copyright{}", stylesheet.Rules[2].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Background_Gradients()
         {
             var parser = new Parser();
             var css = parser.Parse(@".bg{background:-moz-linear-gradient(top, #FFF 0, #FFF 100%) !important;}");
 
-            Assert.That(css.Errors.Count == 0);
+            Assert.IsTrue(css.Errors.Count == 0);
             Assert.AreEqual(1, css.Rules.Count());
             Assert.AreEqual(@".bg{background:-moz-linear-gradient(top,#FFF 0,#FFF 100%) !important;}", css.Rules[0].ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Background_Gradients_With_Nested_RGBA()
         {
             var parser = new Parser();
             var css = parser.Parse(@".bg{background: -moz-linear-gradient(left,     rgba(0, 119, 152,     1) 0%,        rgba(1,160, 155,1) 100%);}");
             var cssResult = css.Rules[0].ToString();
 
-            Assert.That(css.Errors.Count == 0);
+            Assert.IsTrue(css.Errors.Count == 0);
             Assert.AreEqual(@".bg{background:-moz-linear-gradient(left,#007798 0%,#01A09B 100%);}", cssResult);
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Background_Gradients_Many()
         {
             var parser = new Parser();
@@ -493,44 +494,44 @@ namespace ExCSS.Tests
                     }");
             var cssResult = css.Rules[0].ToString();
 
-            Assert.That(css.Errors.Count == 0);
+            Assert.IsTrue(css.Errors.Count == 0);
             Assert.AreEqual(@".group-sticker .no-override:hover:before,.group-sticker .no-override.on:before{z-index:2;border-radius:100%;background:#9ACE48 !important;background:-webkit-gradient(linear,left top,left bottom,color-stop(0,#9ACE48),color-stop(100%,#84B23C)) !important;background:-moz-linear-gradient(left,#007798 0%,#01A09B 100%);background:-webkit-gradient-linear(left top,left bottom,color-stop(0,#9ACE48),color-stop(100%,#84B23C)) !important;background:-webkit-linear-gradient(top,#9ACE48 0,#84B23C 100%) !important;background:-o-linear-gradient(top,#9ACE48 0,#84B23C 100%) !important;background:-ms-linear-gradient(top,#9ACE48 0,#84B23C 100%) !important;background:linear-gradient(to bottom,#9ACE48 0,#84B23C 100%) !important;}", cssResult);
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Background_Gradients_With_Legacy_Syntax()
         {
             var parser = new Parser();
             var css = parser.Parse(@".c{background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #9ACE48), color-stop(100%, #84B23C)) !important;}");
             var cssResult = css.Rules[0].ToString();
 
-            Assert.That(css.Errors.Count == 0);
+            Assert.IsTrue(css.Errors.Count == 0);
             Assert.AreEqual(@".c{background:-webkit-gradient(linear,left top,left bottom,color-stop(0,#9ACE48),color-stop(100%,#84B23C)) !important;}", cssResult);
         }
 
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Background_Gradients_With_Nested_Fn()
         {
             var parser = new Parser();
             var css = parser.Parse(@".c{background:-webkit-gradient(linear, left top, left bottom, color-stop(0, #9ACE48), color-stop(100%,#84B23C)) !important;}");
             var cssResult = css.Rules[0].ToString();
 
-            Assert.That(css.Errors.Count == 0);
+            Assert.IsTrue(css.Errors.Count == 0);
             Assert.AreEqual(@".c{background:-webkit-gradient(linear,left top,left bottom,color-stop(0,#9ACE48),color-stop(100%,#84B23C)) !important;}", cssResult);
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Font_Shorthand()
         {
             var parser = new Parser();
             var css = parser.Parse(@".body {font: 300 italic 1.3em/1.7em 'FB Armada', sans-serif;}");
 
-            Assert.That(css.Errors.Count == 0);
+            Assert.IsTrue(css.Errors.Count == 0);
             Assert.AreEqual(@".body{font:300 italic 1.3em/1.7em 'FB Armada',sans-serif;}", css.ToString());
         }
-        
-        [Test]
+
+        [TestMethod]
         public void Parser_Reads_Multi_Microsoft_Filter_Fns()
         {
             var css = @".test {
@@ -547,15 +548,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', end
 filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1e5799',endColorstr='#7db9e8',GradientType=0); /* IE6-8 */
 }";
             var results = new Parser().Parse(css);
-            Assert.That(results.Errors.Count == 0);
+            Assert.IsTrue(results.Errors.Count == 0);
         }
 
-        [Test]
+        [TestMethod]
         public void Parser_Reads_Microsoft_Star_Hack()
         {
             var css = @"body{*display:inline;}";
             var results = new Parser().Parse(css);
-            Assert.That(results.Errors.Count == 0);
+            Assert.IsTrue(results.Errors.Count == 0);
             Assert.AreEqual(css, results.ToString());
             Assert.AreEqual("*display", results.StyleRules.Single().Declarations.Single().Name);
         }

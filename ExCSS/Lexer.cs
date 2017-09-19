@@ -451,18 +451,17 @@ namespace ExCSS
                     case Specification.Asterisk:
                         current = _stylesheetReader.Next;
                         if (current == Specification.Solidus)
-                        {
                             return DataBlock(_stylesheetReader.Next);
-                        }
                         break;
 
                     case Specification.EndOfFile:
                         ErrorHandler(ParserError.EndOfFile, ErrorMessages.ExpectedCommentEnd);
-
                         return DataBlock(current);
-                }
 
-                current = _stylesheetReader.Next;
+                    default:
+                        current = _stylesheetReader.Next;
+                        break;
+                }
             }
         }
 

@@ -1,11 +1,12 @@
-﻿using NUnit.Framework;
+﻿
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ExCSS.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class ParserErrorHandlerFixture
     {
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_Double_Quote_New_Line()
         {
             var stylesheet = new Parser().Parse("@import \"\r\n");
@@ -17,7 +18,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("Expected double quoted string to terminate before form feed or line feed.", stylesheet.Errors[0].Message);
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_Single_Quote_New_Line()
         {
             var stylesheet = new Parser().Parse("@import '\r\n");
@@ -29,7 +30,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("Expected single quoted string to terminate before form feed or line feed.", stylesheet.Errors[0].Message);
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_Double_Quote_Backslash()
         {
             var stylesheet = new Parser().Parse("@import \\");
@@ -41,7 +42,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("Unexpected line break or EOF.", stylesheet.Errors[0].Message);
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_Single_Quote_Backslash()
         {
             var stylesheet = new Parser().Parse("@import '\\");
@@ -53,7 +54,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("Expected single quoted string to terminate before end of file.", stylesheet.Errors[0].Message);
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_Backslash_Newline()
         {
             var stylesheet = new Parser().Parse("@import \\\r\n");
@@ -65,7 +66,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("Unexpected line break or EOF.", stylesheet.Errors[0].Message);
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_URL_EoF()
         {
             var stylesheet = new Parser().Parse(".class{ prop: url(");
@@ -77,7 +78,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("Expected URL to terminate before line break or end of file.", stylesheet.Errors[0].Message);
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_URL_New_Line()
         {
             var stylesheet = new Parser().Parse(".class{ prop: url(\"\r\n}");
@@ -94,7 +95,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("Expected URL to terminate before line break or end of file.", stylesheet.Errors[1].Message);
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_URL_Backslash_EoF()
         {
             var stylesheet = new Parser().Parse(".class{ prop: url(\"\\");
@@ -111,7 +112,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("Unexpected line break or EOF.", stylesheet.Errors[1].Message);
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_URL_Single_Quote_New_Line()
         {
             var stylesheet = new Parser().Parse(".class{ prop: url('\r\n");
@@ -126,7 +127,7 @@ namespace ExCSS.Tests
             Assert.AreEqual(1, stylesheet.Errors[1].Column);
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_URL_Single_Quote_Backslash_EOF()
         {
             var stylesheet = new Parser().Parse(".class{ prop: url('\\");
@@ -141,7 +142,7 @@ namespace ExCSS.Tests
             Assert.AreEqual(21, stylesheet.Errors[1].Column);
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_Url_Unquoted()
         {
             var stylesheet = new Parser().Parse(".class{url(test')}");
@@ -158,7 +159,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("An unexpected error occurred.", stylesheet.Errors[1].Message);
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_Post_URL_Errant_Character()
         {
             var stylesheet = new Parser().Parse(".class{ prop: url('a'-");
@@ -170,7 +171,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("Invalid character in URL.", stylesheet.Errors[0].Message);
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_Hash_Backslash()
         {
             var stylesheet = new Parser().Parse("n#\\");
@@ -182,7 +183,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("Invalid character after #.", stylesheet.Errors[0].Message);
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_Numeric_Backslash()
         {
             var stylesheet = new Parser().Parse("#a\\");
@@ -199,7 +200,7 @@ namespace ExCSS.Tests
             Assert.AreEqual("Unexpected line break or EOF.", stylesheet.Errors[1].Message);
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_Double_Quotes_Backslash()
         {
             var stylesheet = new Parser().Parse(".calss{a: \"\\");
@@ -211,25 +212,19 @@ namespace ExCSS.Tests
             Assert.AreEqual("Expected double quoted string to terminate before end of file.", stylesheet.Errors[0].Message);
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_Empty_Value()
         {
-            Assert.DoesNotThrow(() =>
-            {
                 var stylesheet = new Parser().Parse(".foo{clear:;}");
                 Assert.AreEqual(1, stylesheet.Errors.Count);
                 Assert.AreEqual(".foo{clear:;}", stylesheet.ToString());
-            });
         }
 
-        [Test]
+        [TestMethod]
         public void Lexer_Handles_Invalid_Important_Usage()
         {
-            Assert.DoesNotThrow(() =>
-            {
                 var stylesheet = new Parser().Parse(@".accordion-a {background-color: #c6c6c6; !important;}");
                 Assert.IsTrue(stylesheet.Errors.Count > 0);
-            });
         }
     }
 }
